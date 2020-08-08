@@ -1,10 +1,15 @@
 import { Scene } from 'phaser';
-import{ musicConfig } from '../config/musicConfig';
+import{ musicConfig } from '../config/gameConfig';
+import { menuConfig } from '../config/gameConfig';
 import logoImg from '../assets/img/XION-logo.png';
+import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import frame from '../assets/img/window_red2.png';
 import startKey from '../assets/img/start.png';
-import customizeShipKey from '../assets/img/customize-ship.png'
+import start_selectedKey from '../assets/img/start_selected.png'
+import customizeShipKey from '../assets/img/customize-ship.png';
+import customizeShipKey_selected from '../assets/img/customize-ship_selected.png';
+
 
 class MenuScene extends Scene {
 
@@ -20,6 +25,8 @@ class MenuScene extends Scene {
 
         // Load XION logo
         this.load.image("logo", logoImg);
+        // Load star img
+        this.load.image("star", star);
         // Load background image
         this.load.image('background', background);
         // Load window frame
@@ -27,40 +34,88 @@ class MenuScene extends Scene {
         /**
          * Load menu buttons
          */
-        this.load.image('start', startKey)
-        this.load.image('customizeShip', customizeShipKey)
+        this.load.image('start', startKey);
+        this.load.image('start_selected', start_selectedKey);
+        this.load.image('customizeShip', customizeShipKey);
+        this.load.image('customizeShip_selected', customizeShipKey_selected);
+        
         // Load main menu background music
         this.load.audio('ambient_main', [__dirname + 'src/assets/sound/music/ambientmain_0.ogg']);
         }
         
     create() {
+        
         /**
          * Init cursor keys (arrow keys for navigating menu)
          */
-        this.cursors = this.input.keyboard.createCursorKeys();
+        this.downArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        this.upArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+
+        /**
+         * Arrow Key Event listeners
+        */
+
+        this.downArrow.on('down', () => {
+            // Number of selectable items on main menu. 0 index based)
+            if(menuConfig.selection < menuConfig.maxMenuItems)  {
+                menuConfig.selection ++;
+            } else {
+                menuConfig.selection = 0;
+            }
+            // Change selected item
+            this.highlightSelected(menuConfig.selection);
+        });
+        this.upArrow.on('down', () => {
+            if(menuConfig.selection > 0)  {
+                menuConfig.selection --;
+            } else {
+                menuConfig.selection = menuConfig.maxMenuItems;
+            }
+            // Change selected item
+            this.highlightSelected(menuConfig.selection);
+        });
 
 
 
         /**
-         * Add background tile sprite
+         * Add background
          */
-        this.background = this.add.image(450, 450, 'background').setScale(0.5);
+        this.stars = this.physics.add.group();
+
+        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
         // Add XION logo to screen
         this.logo = this.add.image(450, 150, "logo").setScale(0.7);
         // Add window frame
         // this.frame = this.add.image(0, 0, 'frame').setOrigin(0, 0);
         // Add menu keys
         this.startKey = this.add.image(450, 450, 'start').setScale(0.6);
+        this.startKey.setTexture('start_selected'); // Set Start as selected option
         this.customizeShipKey = this.add.image(450, 550,'customizeShip')
 
         // Add and start background music
         this.menuMusic = this.sound.add('ambient_main', musicConfig);
-        this.menuMusic.play();
+        // this.menuMusic.play();
 
     }
 
     update() {
-        this.background.tilePositionY -= 0.1;
+        // this.background.tilePositionY -= 0.1;
+    }
+
+    resetMenuSelections() {
+        this.startKey.setTexture('start');
+        this.customizeShipKey.setTexture('customizeShip');
+
+    }
+
+    highlightSelected(selection) {
+        // Reset selection colors
+        this.resetMenuSelections();
+        if (selection === 0) {
+            this.startKey.setTexture('start_selected');
+        } else if (selection === 1) {
+            this.customizeShipKey.setTexture('customizeShip_selected')
+        }
     }
 
 
