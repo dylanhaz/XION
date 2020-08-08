@@ -41,7 +41,11 @@ class MenuScene extends Scene {
         
         // Load main menu background music
         this.load.audio('ambient_main', [__dirname + 'src/assets/sound/music/ambientmain_0.ogg']);
+
+        // Load sound effects
+        this.load.audio('menuClick', __dirname + 'src/assets/sound/effects/menu_selection_click.ogg');
         }
+
         
     create() {
         
@@ -50,6 +54,11 @@ class MenuScene extends Scene {
          */
         this.downArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.upArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+
+        /**
+         * Add Arrow key sounds
+         */
+        this.menuClick = this.sound.add('menuClick');
 
         /**
          * Arrow Key Event listeners
@@ -79,17 +88,19 @@ class MenuScene extends Scene {
 
         /**
          * Add background
+         * Create a set number of stars and put them in random positions on the screen at different speeds according to size
          */
         this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
+
         this.stars = this.physics.add.group();
 
-        for (var i = 0; i < 40; i++) {
+        for (var i = 0; i < 100; i++) {
             this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
         };
 
         Phaser.Actions.Call(this.stars.getChildren(), (item) => {
             item.setScale(Math.random());
-            item.setVelocityY(Math.random() * ((item._scaleX) * 7));
+            item.setVelocityY(Math.random() * ((item._scaleX) * 10));
             // console.log(item);
         });
         // this.star.push(this.starArr)
@@ -132,6 +143,7 @@ class MenuScene extends Scene {
     highlightSelected(selection) {
         // Reset selection colors
         this.resetMenuSelections();
+        this.menuClick.play();
         if (selection === 0) {
             this.startKey.setTexture('start_selected');
         } else if (selection === 1) {
