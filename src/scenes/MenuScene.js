@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import{ musicConfig } from '../config/gameConfig';
+import{ musicConfig, config } from '../config/gameConfig';
 import { menuConfig } from '../config/gameConfig';
 import logoImg from '../assets/img/XION-logo.png';
 import star from '../assets/img/star.png';
@@ -80,9 +80,20 @@ class MenuScene extends Scene {
         /**
          * Add background
          */
+        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
         this.stars = this.physics.add.group();
 
-        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
+        for (var i = 0; i < 40; i++) {
+            this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
+        };
+
+        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
+            item.setScale(Math.random());
+            item.setVelocityY(Math.random() * ((item._scaleX) * 7));
+            // console.log(item);
+        });
+        // this.star.push(this.starArr)
+
         // Add XION logo to screen
         this.logo = this.add.image(450, 150, "logo").setScale(0.7);
         // Add window frame
@@ -94,12 +105,22 @@ class MenuScene extends Scene {
 
         // Add and start background music
         this.menuMusic = this.sound.add('ambient_main', musicConfig);
-        // this.menuMusic.play();
+        this.menuMusic.play();
 
     }
 
     update() {
-        // this.background.tilePositionY -= 0.1;
+        this.background.tilePositionY -= 1;
+        /**
+         * Check if stars are below screen and reset
+         */
+        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
+            if (item.y > config.height + 10) {
+                item.y = -10;
+                item.x = Math.random() * config.width;
+                console.log('Off Page');
+            }
+        });
     }
 
     resetMenuSelections() {
