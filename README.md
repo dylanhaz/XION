@@ -1,4 +1,4 @@
-XION is my reenvisioned version of the game I once made back in 2009 originaly using the GameMaker language. I lost the game due to a hard drive failure and lost motivation in continuing it. I am now remaking a new version of it with ES6 and the Phaser3 Game Framework.
+XION is my reenvisioned version of the game I once made back in 2009 originaly using the GameMaker language. I lost the game due to a hard drive failure. I am now remaking a new version of it with ES6 and the Phaser3 Game Framework.
 
 
 MUSIC:
