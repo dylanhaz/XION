@@ -2,13 +2,16 @@ XION is my reenvisioned version of the game I once made back in 2009 originaly u
 
 
 MUSIC:
-tragic-ambient-main-menu music by brandon75689
+Tragic Ambient Main-Menu Music by brandon75689
 ("https://opengameart.org/content/tragic-ambient-main-menu")
 
-BACKGROUND ART:
-darklighter_designs 
+SOUND:
+Menu Selection Click - NenadSimic
+("https://opengameart.org/content/menu-selection-click")
+
+ART:
+Static Star background - darklighter_designs 
 (https://opengameart.org/content/starfield-alpha-4k)
 
 TEXT:
-Logo - Font-Generator.com
-Menu Buttons - Font-Generator.com
+Logo, Menu Buttons - Font-Generator.com
