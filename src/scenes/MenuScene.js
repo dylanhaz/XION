@@ -1,7 +1,8 @@
 import { Scene } from 'phaser';
-import{ musicConfig, config } from '../config/gameConfig';
-import { menuConfig } from '../config/gameConfig';
-import logoImg from '../assets/img/XION-logo.png';
+// import { Stage1Scene } from '../scenes/Stage1Scene';
+import{ musicConfig, config, menuConfig } from '../config/gameConfig';
+// import { menuConfig } from '../config/gameConfig';
+import logoImg from '../assets/img/XION_logo_spritesheet.png';
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import frame from '../assets/img/window_red2.png';
@@ -12,6 +13,9 @@ import customizeShipKey_selected from '../assets/img/customize-ship_selected.png
 
 
 class MenuScene extends Scene {
+    constructor() {
+        super('MenuScene');
+    }
 
     preload() {
         // Disable mouse rightclick
@@ -24,7 +28,10 @@ class MenuScene extends Scene {
 
 
         // Load XION logo
-        this.load.image("logo", logoImg);
+        this.load.spritesheet("logo", logoImg, {
+            frameWidth: 500,
+            frameHeight: 200
+        });
         // Load star img
         this.load.image("star", star);
         // Load background image
@@ -50,10 +57,11 @@ class MenuScene extends Scene {
     create() {
         
         /**
-         * Init cursor keys (arrow keys for navigating menu)
+         * Init cursor keys
          */
         this.downArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.upArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
         /**
          * Add Arrow key sounds
@@ -84,6 +92,17 @@ class MenuScene extends Scene {
             this.highlightSelected(menuConfig.selection);
         });
 
+        /**
+         * Listen for ENTER key press and check what item is selected
+         */
+        this.enterKey.on('down', () => {
+            if(menuConfig.selection === 0) {
+                this.scene.start('Stage1Scene')
+            } else if(menuConfig.selection === 1) {
+                alert('customize ship');
+            }
+        })
+
 
 
         /**
@@ -106,7 +125,14 @@ class MenuScene extends Scene {
         // this.star.push(this.starArr)
 
         // Add XION logo to screen
-        this.logo = this.add.image(450, 150, "logo").setScale(0.7);
+        this.logo = this.add.sprite(450, 150, "logo");
+        this.anims.create({
+            key: "logo_anims",
+            frames: this.anims.generateFrameNumbers("logo"),
+            frameRate: 5,
+            repeat: -1
+          });
+          this.logo.play("logo_anims");
         // Add window frame
         // this.frame = this.add.image(0, 0, 'frame').setOrigin(0, 0);
         // Add menu keys
@@ -116,7 +142,7 @@ class MenuScene extends Scene {
 
         // Add and start background music
         this.menuMusic = this.sound.add('ambient_main', musicConfig);
-        this.menuMusic.play();
+        // this.menuMusic.play();
 
     }
 
@@ -129,7 +155,6 @@ class MenuScene extends Scene {
             if (item.y > config.height + 10) {
                 item.y = -10;
                 item.x = Math.random() * config.width;
-                console.log('Off Page');
             }
         });
     }

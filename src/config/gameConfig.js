@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import MenuScene from "../scenes/MenuScene"
+import Stage1Scene from "../scenes/Stage1Scene";
 
 const musicConfig = {
   mute: false,
@@ -13,7 +14,7 @@ const musicConfig = {
 
 const menuConfig = {
   selection : 0,
-  maxMenuItems : 1 // 0 index based
+  maxMenuItems : 1, // 0 index based
 }
 
 
@@ -22,7 +23,7 @@ const config = {
     parent: "phaser-example",
     width: 900,
     height: 1000,
-    scene: MenuScene,
+    scene: [MenuScene, Stage1Scene],
     autoCenter: true,
     physics: {
       default: "arcade",
