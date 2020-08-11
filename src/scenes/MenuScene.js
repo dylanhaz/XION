@@ -12,6 +12,7 @@ import customizeShipKey from '../assets/img/customize-ship.png';
 import customizeShipKey_selected from '../assets/img/customize-ship_selected.png';
 
 
+
 class MenuScene extends Scene {
     constructor() {
         super('MenuScene');
