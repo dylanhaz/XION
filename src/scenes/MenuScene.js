@@ -48,7 +48,7 @@ class MenuScene extends Scene {
         this.load.image('customizeShip_selected', customizeShipKey_selected);
         
         // Load main menu background music
-        this.load.audio('ambient_main', [__dirname + 'src/assets/sound/music/ambientmain_0.ogg']);
+        this.load.audio('menu_music', [__dirname + 'src/assets/sound/music/menu_music.ogg']);
 
         // Load sound effects
         this.load.audio('menuClick', __dirname + 'src/assets/sound/effects/menu_selection_click.ogg');
@@ -56,10 +56,66 @@ class MenuScene extends Scene {
 
         
     create() {
-        
+
+        // Init cursor keys
+        this.initCursorKeys();
+
+        // Add Background
+        this.createBackground();
+
+        // Add menu keys
+        this.createMenuKeys();
+
+        // Add background music
+        this.startMusic(false, 'menu_music');
+
+
         /**
-         * Init cursor keys
+         * Event listeners
          */
+        ////
+
+        this.initEventListeners();
+        
+
+
+    }
+
+    update() {
+        this.moveStars();
+        
+    }
+
+    /////
+    /////
+    /////
+    /////
+    /////
+    /////
+    /////
+
+    /**
+     * Methods
+     */
+
+    resetMenuSelections() {
+        this.startKey.setTexture('start');
+        this.customizeShipKey.setTexture('customizeShip');
+
+    }
+
+    highlightSelected(selection) {
+        // Reset selection colors
+        this.resetMenuSelections();
+        this.menuClick.play();
+        if (selection === 0) {
+            this.startKey.setTexture('start_selected');
+        } else if (selection === 1) {
+            this.customizeShipKey.setTexture('customizeShip_selected')
+        }
+    }
+
+    initCursorKeys() {
         this.downArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.upArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -68,11 +124,67 @@ class MenuScene extends Scene {
          * Add Arrow key sounds
          */
         this.menuClick = this.sound.add('menuClick');
+    }
 
+    createBackground() {
         /**
-         * Arrow Key Event listeners
-        */
+          * Create a set number of stars and put them in random positions on the screen at different speeds according to size
+         */
+        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
 
+        this.stars = this.physics.add.group();
+
+        for (var i = 0; i < 100; i++) {
+            this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
+        };
+
+        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
+            item.setScale(Math.random());
+            item.setVelocityY(Math.random() * ((item._scaleX) * 15));
+            // console.log(item);
+        });
+
+        // Add XION logo to screen
+        this.logo = this.add.sprite(450, 150, "logo");
+        this.anims.create({
+            key: "logo_anims",
+            frames: this.anims.generateFrameNumbers("logo"),
+            frameRate: 5,
+            repeat: -1
+          });
+          this.logo.play("logo_anims");
+          
+    }
+
+    createMenuKeys() {
+        // Add menu keys
+        this.startKey = this.add.image(450, 450, 'start').setScale(0.6);
+        this.startKey.setTexture('start_selected'); // Set Start as selected option
+        this.customizeShipKey = this.add.image(450, 550,'customizeShip')
+    }
+
+    startMusic(play, key) {
+        // Add and start background music
+        this.menuMusic = this.sound.add(key, musicConfig);
+        if(play) {
+            this.menuMusic.play();
+        }
+    }
+
+    moveStars() {
+        /**
+         * Check if stars are below screen and reset
+         */
+        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
+            if (item.y > config.height + 10) {
+                item.y = -10;
+                item.x = Math.random() * config.width;
+            }
+        });
+    }
+
+    initEventListeners() {
+        // Arrow Keys
         this.downArrow.on('down', () => {
             // Number of selectable items on main menu. 0 index based)
             if(menuConfig.selection < menuConfig.maxMenuItems)  {
@@ -102,79 +214,7 @@ class MenuScene extends Scene {
             } else if(menuConfig.selection === 1) {
                 alert('customize ship');
             }
-        })
-
-
-
-        /**
-         * Add background
-         * Create a set number of stars and put them in random positions on the screen at different speeds according to size
-         */
-        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
-
-        this.stars = this.physics.add.group();
-
-        for (var i = 0; i < 100; i++) {
-            this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
-        };
-
-        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
-            item.setScale(Math.random());
-            item.setVelocityY(Math.random() * ((item._scaleX) * 10));
-            // console.log(item);
         });
-        // this.star.push(this.starArr)
-
-        // Add XION logo to screen
-        this.logo = this.add.sprite(450, 150, "logo");
-        this.anims.create({
-            key: "logo_anims",
-            frames: this.anims.generateFrameNumbers("logo"),
-            frameRate: 5,
-            repeat: -1
-          });
-          this.logo.play("logo_anims");
-        // Add window frame
-        // this.frame = this.add.image(0, 0, 'frame').setOrigin(0, 0);
-        // Add menu keys
-        this.startKey = this.add.image(450, 450, 'start').setScale(0.6);
-        this.startKey.setTexture('start_selected'); // Set Start as selected option
-        this.customizeShipKey = this.add.image(450, 550,'customizeShip')
-
-        // Add and start background music
-        this.menuMusic = this.sound.add('ambient_main', musicConfig);
-        // this.menuMusic.play();
-
-    }
-
-    update() {
-        this.background.tilePositionY -= 1;
-        /**
-         * Check if stars are below screen and reset
-         */
-        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
-            if (item.y > config.height + 10) {
-                item.y = -10;
-                item.x = Math.random() * config.width;
-            }
-        });
-    }
-
-    resetMenuSelections() {
-        this.startKey.setTexture('start');
-        this.customizeShipKey.setTexture('customizeShip');
-
-    }
-
-    highlightSelected(selection) {
-        // Reset selection colors
-        this.resetMenuSelections();
-        this.menuClick.play();
-        if (selection === 0) {
-            this.startKey.setTexture('start_selected');
-        } else if (selection === 1) {
-            this.customizeShipKey.setTexture('customizeShip_selected')
-        }
     }
 
 
