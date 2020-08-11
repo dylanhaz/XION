@@ -23,7 +23,7 @@ const config = {
     parent: "phaser-example",
     width: 900,
     height: 1000,
-    scene: [MenuScene, Stage1Scene],
+    scene: [Stage1Scene, MenuScene],
     autoCenter: true,
     physics: {
       default: "arcade",
