@@ -160,7 +160,7 @@ class MenuScene extends Scene {
         // Add menu keys
         this.startKey = this.add.image(450, 450, 'start').setScale(0.6);
         this.startKey.setTexture('start_selected'); // Set Start as selected option
-        this.customizeShipKey = this.add.image(450, 550,'customizeShip')
+        this.customizeShipKey = this.add.image(450, 550,'customizeShip').setScale(0.6);
     }
 
     startMusic(play, key) {
