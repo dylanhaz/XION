@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import player from '../assets/img/player/player.png';
-import{ config } from '../config/gameConfig';
+import playerShot from '../assets/img/player/shoot.png'
+import{ config, gamePlay } from '../config/gameConfig';
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import MenuScene from '../scenes/MenuScene';
@@ -13,88 +14,82 @@ class Stage1Scene extends Scene {
 
     preload() {
 
+        this.hideMouse();
 
-        // Disable mouse rightclick
-        this.input.mouse.disableContextMenu();
-        // Hide Mouse
-        //Hide mouse
-        let canvas = this.sys.canvas;
-        canvas.style.cursor = 'none';
-
-
-
-
-
-        this.load.image("player", player);
-        // Load background image
-        this.load.image('background', background);
-        this.load.image("star", star);
-
-        this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
+        this.loadAssets();
+        
         
     }
 
     create() {
         // Add Background
         this.createBackground();
-        this.player = this.physics.add.image(450, 850, "player");
-        this.player.setCollideWorldBounds(true);
-        this.startMusic(true, "fight1");
-        // this.initCursorKeys();
+
+
+        //Player Ship
+        this.createPlayer();
+
+        // Start Music
+        this.startMusic(false, "fight1");
+
+        // Init cursor keys
         this.cursors = this.input.keyboard.createCursorKeys();
 
     }
 
     update() {
+        // Move stars in background
         this.moveStars();
+        // Player Control
+        this.updatePlayer();
 
-        if (this.cursors.left.isDown) {
-            this.player.x -= 3;
-        }
 
-        if (this.cursors.right.isDown) {
-            this.player.x += 3;
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.y -= 3;
-        }
-
-        if (this.cursors.down.isDown) {
-            console.log(this.cursors.down);
-            this.player.y += 3;
-        }
+        
 
     }
 
-    // initCursorKeys() {
-    //     this.downArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-    //     this.upArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    //     this.rightArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-    //     this.leftArrow = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    // }
+    
+    //////////
+    //////////
+    //////////
+    /**
+     * Preload Methods
+     * 
+     * 
+     * 
+     */
 
-    startMusic(play, key) {
-        // Add and start background music
-        this.menuMusic = this.sound.add(key, musicConfig);
-        if(play) {
-            this.menuMusic.play();
-        }
+    hideMouse() {
+        // Disable mouse rightclick
+        this.input.mouse.disableContextMenu();
+        // Hide Mouse
+        //Hide mouse
+        let canvas = this.sys.canvas;
+        canvas.style.cursor = 'none';
     }
 
-    moveStars() {
-        /**
-         * Check if stars are below screen and reset
-         */
-        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
-            if (item.y > config.height + 10) {
-                item.y = -10;
-                item.x = Math.random() * config.width;
-            }
-        });
+    loadAssets() {
+        this.load.image("player", player);
+        this.load.image("playerShot", playerShot);
+        // Load background image
+        this.load.image('background', background);
+        this.load.image("star", star);
 
-        this.moveStars();
+        this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
+        this.load.audio('playerShootingSound', [__dirname + 'src/assets/sound/effects/sfx_wpn_laser7.ogg']);
     }
+    //////////
+    //////////
+    //////////
+
+    /**
+     * Create Methods
+     * 
+     * 
+     * 
+     */
+
+
 
     createBackground() {
         /**
@@ -114,6 +109,91 @@ class Stage1Scene extends Scene {
             // console.log(item);
         });
     }
+
+    
+
+    createPlayer() {
+        this.player = this.physics.add.image(450, 850, "player").setScale(0.7);
+        this.player.setCollideWorldBounds(true);
+        this.initShooting();
+    }
+
+    
+    initShooting() {
+        this.playerShots = this.physics.add.group();
+        this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
+    }
+    
+    createShot() {
+        this.playerShots.create(this.player.x + 13, this.player.y - 33, 'playerShot');
+        this.playerShootSoundEffect.play();
+        this.playerShots.create(this.player.x - 13, this.player.y - 33, 'playerShot');
+        setTimeout(()=> {
+            this.playerShots.create(this.player.x + 23, this.player.y - 33, 'playerShot');
+            this.playerShootSoundEffect.play();
+            this.playerShots.create(this.player.x - 23, this.player.y - 33, 'playerShot');
+        }, gamePlay.playerShootDelay * 3);
+        
+        
+    }
+
+    startMusic(play, key) {
+        // Add and start background music
+        this.menuMusic = this.sound.add(key, musicConfig);
+        if(play) {
+            this.menuMusic.play();
+        }
+    }
+    //////////
+    //////////
+    //////////
+    /**
+     * Update Methods
+     * 
+     * 
+     * 
+     */
+    
+
+    updatePlayer() {
+
+        if (this.cursors.left.isDown) {
+            this.player.x -= 3;
+        }
+
+        if (this.cursors.right.isDown) {
+            this.player.x += 3;
+        }
+
+        if (this.cursors.up.isDown) {
+            this.player.y -= 3;
+        }
+
+        if (this.cursors.down.isDown) {
+            this.player.y += 3;
+        }
+
+        if (this.shoot.isDown) {
+            if (gamePlay.playerShootDelay > 60) {
+                //Shooting
+                
+                this.createShot();
+                gamePlay.playerShootDelay = 0;
+            } else {
+                gamePlay.playerShootDelay ++;
+            }
+        }
+
+        Phaser.Actions.Call(this.playerShots.getChildren(), (shot) => {
+            shot.setVelocityY(-1000);
+            if(shot.y < -5) {
+                shot.destroy();
+            }
+        });
+    }
+
+    
 
     moveStars() {
         /**

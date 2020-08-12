@@ -17,6 +17,9 @@ const menuConfig = {
   maxMenuItems : 1, // 0 index based
 }
 
+const gamePlay = {
+  playerShootDelay : 0
+}
 
 const config = {
     type: Phaser.AUTO,
@@ -33,4 +36,4 @@ const config = {
   }
   };
 
-export { config, musicConfig, menuConfig };
+export { config, musicConfig, menuConfig, gamePlay };
