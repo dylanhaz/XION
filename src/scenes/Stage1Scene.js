@@ -14,6 +14,8 @@ class Stage1Scene extends Scene {
 
     preload() {
 
+        this.displayLoading();
+
         this.hideMouse();
 
         this.loadAssets();
@@ -61,6 +63,73 @@ class Stage1Scene extends Scene {
      * 
      */
 
+    // LOADING BAR
+    displayLoading() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        let progressBar = this.add.graphics();
+        let progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        // progressBox.fillRect(240, 270, 320, 50);
+        progressBox.fillRect(292, 465, 320, 50);
+        
+        const loadingText = this.make.text({
+            x: width / 2,
+            y: height / 2 - 50,
+            text: 'Loading...',
+            style: {
+                font: '20px monospace',
+                fill: '#ffffff'
+                }
+
+            });
+
+        loadingText.setOrigin(0.5, 0.5);
+
+        const percentText = this.make.text({
+            x: width / 2,
+            y: height / 2 - 5,
+            text: '0%',
+            style: {
+                font: '18px monospace',
+                fill: '#ffffff'
+            }
+        });
+
+        const assetText = this.make.text({
+            x: width / 2,
+            y: height / 2 + 50,
+            text: '',
+            style: {
+                font: '18px monospace',
+                fill: '#ffffff'
+            }
+        });
+        assetText.setOrigin(0.5, 0.5);
+        percentText.setOrigin(0.5, 0.5);
+
+        this.load.on('progress', function (value) {
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(300, 475, 300 * value, 30);
+            percentText.setText(parseInt(value * 100) + '%');
+            
+        });
+                    
+        this.load.on('fileprogress', function (file) {
+            assetText.setText('Loading asset: ' + file.key);
+        });
+         
+        this.load.on('complete', function () {
+            progressBar.destroy();
+            progressBox.destroy();
+            loadingText.destroy();
+            percentText.destroy();
+            assetText.destroy();
+        });
+    }
+
+    // Hide mouse and disable right click
     hideMouse() {
         // Disable mouse rightclick
         this.input.mouse.disableContextMenu();
@@ -70,6 +139,7 @@ class Stage1Scene extends Scene {
         canvas.style.cursor = 'none';
     }
 
+    // Load game assets
     loadAssets() {
         this.load.image("player", player);
         this.load.image("playerShot", playerShot);
