@@ -42,6 +42,8 @@ class Stage1Scene extends Scene {
         this.moveStars();
         // Player Control
         this.updatePlayer();
+        // Player Shooting timer delay
+        this.playerShotTimer();
 
 
         
@@ -130,9 +132,12 @@ class Stage1Scene extends Scene {
         this.playerShootSoundEffect.play();
         this.playerShots.create(this.player.x - 13, this.player.y - 33, 'playerShot');
         setTimeout(()=> {
-            this.playerShots.create(this.player.x + 23, this.player.y - 33, 'playerShot');
-            this.playerShootSoundEffect.play();
-            this.playerShots.create(this.player.x - 23, this.player.y - 33, 'playerShot');
+            if(this.shoot.isDown) {
+
+                this.playerShots.create(this.player.x + 23, this.player.y - 33, 'playerShot');
+                this.playerShootSoundEffect.play();
+                this.playerShots.create(this.player.x - 23, this.player.y - 33, 'playerShot');
+            }
         }, gamePlay.playerShootDelay * 3);
         
         
@@ -175,13 +180,11 @@ class Stage1Scene extends Scene {
         }
 
         if (this.shoot.isDown) {
-            if (gamePlay.playerShootDelay > 60) {
+            if (gamePlay.playerShootCounter === gamePlay.playerShootDelay) {
                 //Shooting
                 
                 this.createShot();
-                gamePlay.playerShootDelay = 0;
-            } else {
-                gamePlay.playerShootDelay ++;
+                gamePlay.playerShootCounter = 0;
             }
         }
 
@@ -191,6 +194,12 @@ class Stage1Scene extends Scene {
                 shot.destroy();
             }
         });
+    }
+
+    playerShotTimer() {
+        if(gamePlay.playerShootCounter < gamePlay.playerShootDelay) {
+            gamePlay.playerShootCounter ++;
+        }
     }
 
     
