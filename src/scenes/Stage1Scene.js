@@ -1,11 +1,15 @@
 import { Scene } from 'phaser';
 import player from '../assets/img/player/player.png';
 import playerShot from '../assets/img/player/shoot.png'
+import basicShip from '../assets/img/enemies/basic/basic_ship.png'
 import{ config, gamePlay } from '../config/gameConfig';
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import MenuScene from '../scenes/MenuScene';
 import{ musicConfig } from '../config/gameConfig';
+
+
+
 
 class Stage1Scene extends Scene {
     constructor() {
@@ -37,6 +41,10 @@ class Stage1Scene extends Scene {
         // Init cursor keys
         this.cursors = this.input.keyboard.createCursorKeys();
 
+        // Create basic enemy
+        this.createEnemyGroups();
+        this.createEnemyShip('basicShip', 450, 60, 0);
+
     }
 
     update() {
@@ -46,10 +54,6 @@ class Stage1Scene extends Scene {
         this.updatePlayer();
         // Player Shooting timer delay
         this.playerShotTimer();
-
-
-        
-
     }
 
     
@@ -141,8 +145,11 @@ class Stage1Scene extends Scene {
 
     // Load game assets
     loadAssets() {
+        // Load player images
         this.load.image("player", player);
         this.load.image("playerShot", playerShot);
+        // Load enemy 1 images
+        this.load.image('basicShip', basicShip);
         // Load background image
         this.load.image('background', background);
         this.load.image("star", star);
@@ -190,11 +197,42 @@ class Stage1Scene extends Scene {
         this.initShooting();
     }
 
+    createEnemyGroups() {
+        this.enemies = this.physics.add.group();
+    }
+
+    //Create Basic enemy
+    createEnemyShip(type, x, shootDelay, moveSpeed) {
+        // this.basicShip = this.physics.add.image(450, 200, 'basicShip').setScale(0.7);
+        this.ship = this.enemies.create(x, 100, type).setScale(0.8);
+        this.ship.shootDelay = shootDelay;
+        this.ship.shootTimer = 0;
+
+        Phaser.Actions.Call(this.enemies.getChildren(), (item) => {
+            item.shootTimer = 60;
+            if (item.shootTimer === item.shootDelay) {
+                console.log('FIRE!');
+                console.log(item.shootTimer);
+            } else {
+                console.log('No yet');
+            }
+            
+        });
+        
+        this.ship.setVelocityY(moveSpeed);
+        
+        
+    }
+
     
     initShooting() {
+        // Player
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
+
+        //Basic Enemy
+        this.basicShipShots = this.physics.add.group();
     }
     
     createShot() {
@@ -270,6 +308,12 @@ class Stage1Scene extends Scene {
         if(gamePlay.playerShootCounter < gamePlay.playerShootDelay) {
             gamePlay.playerShootCounter ++;
         }
+    }
+
+    moveEnemys() {
+        Phaser.Actions.Call(this.enemiesBasic.getChildren(), (ship) => {
+            
+        })
     }
 
     
