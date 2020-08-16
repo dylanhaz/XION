@@ -1,14 +1,28 @@
 import { Scene } from 'phaser';
+import{ config, gamePlay } from '../config/gameConfig';
+import{ musicConfig } from '../config/gameConfig';
+
+/**
+ * preloader imports
+ */
+import LoadingBar from '../preloader_scripts/LoadingBar'
 import player from '../assets/img/player/player.png';
 import playerShot from '../assets/img/player/shoot.png'
 import basicShip from '../assets/img/enemies/basic/basic_ship.png'
-import{ config, gamePlay } from '../config/gameConfig';
+import basicShipLaser from '../assets/img/enemies/basic/basic_ship_laser.png'
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
-import MenuScene from '../scenes/MenuScene';
-import{ musicConfig } from '../config/gameConfig';
+import explosion1 from '../assets/img/spritesheets/explosion-1.png';
 
-
+/**
+ * game_scripts
+ */
+import Background from '../game_scripts/Background';
+import Player from '../game_scripts/Player';
+//////////
+/////////
+////////
+///////
 
 
 class Stage1Scene extends Scene {
@@ -17,8 +31,9 @@ class Stage1Scene extends Scene {
     }
 
     preload() {
-
-        this.displayLoading();
+        this.loadCustomClasses();
+        
+        this.loadingBar.displayProgress();
 
         this.hideMouse();
 
@@ -29,11 +44,11 @@ class Stage1Scene extends Scene {
 
     create() {
         // Add Background
-        this.createBackground();
+        this.background.createBackground();
 
 
         //Player Ship
-        this.createPlayer();
+        this.player.createPlayer();
 
         // Start Music
         this.startMusic(false, "fight1");
@@ -43,17 +58,34 @@ class Stage1Scene extends Scene {
 
         // Create basic enemy
         this.createEnemyGroups();
-        this.createEnemyShip('basicShip', 450, 60, 0);
+        this.createEnemyShip('basicShip', 450, 300, 0, 0, 0, 'basicShipLaser', 600, false);
+        this.createEnemyShip('basicShip', 250, 150, 0, 0, 0, 'basicShipLaser', 600, false);
 
+
+        this.physics.add.overlap(this.playerShots, this.enemies, ()=>{
+            console.log('hit enemy');
+        },null, this);
+
+        this.physics.add.overlap(this.player, this.enemyShots, ()=>{
+            console.log('you got hit!');
+        },null, this);
+        
     }
-
+    
     update() {
         // Move stars in background
         this.moveStars();
         // Player Control
         this.updatePlayer();
+
         // Player Shooting timer delay
         this.playerShotTimer();
+
+        // Enemy Shooting timer delay
+        this.updateEnemyShots();
+
+        // Remove offscreen items
+        this.removeOffScreenItems();
     }
 
     
@@ -67,71 +99,13 @@ class Stage1Scene extends Scene {
      * 
      */
 
-    // LOADING BAR
-    displayLoading() {
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
-        let progressBar = this.add.graphics();
-        let progressBox = this.add.graphics();
-        progressBox.fillStyle(0x222222, 0.8);
-        // progressBox.fillRect(240, 270, 320, 50);
-        progressBox.fillRect(292, 465, 320, 50);
-        
-        const loadingText = this.make.text({
-            x: width / 2,
-            y: height / 2 - 50,
-            text: 'Loading...',
-            style: {
-                font: '20px monospace',
-                fill: '#ffffff'
-                }
-
-            });
-
-        loadingText.setOrigin(0.5, 0.5);
-
-        const percentText = this.make.text({
-            x: width / 2,
-            y: height / 2 - 5,
-            text: '0%',
-            style: {
-                font: '18px monospace',
-                fill: '#ffffff'
-            }
-        });
-
-        const assetText = this.make.text({
-            x: width / 2,
-            y: height / 2 + 50,
-            text: '',
-            style: {
-                font: '18px monospace',
-                fill: '#ffffff'
-            }
-        });
-        assetText.setOrigin(0.5, 0.5);
-        percentText.setOrigin(0.5, 0.5);
-
-        this.load.on('progress', function (value) {
-            progressBar.clear();
-            progressBar.fillStyle(0xffffff, 1);
-            progressBar.fillRect(300, 475, 300 * value, 30);
-            percentText.setText(parseInt(value * 100) + '%');
-            
-        });
-                    
-        this.load.on('fileprogress', function (file) {
-            assetText.setText('Loading asset: ' + file.key);
-        });
-         
-        this.load.on('complete', function () {
-            progressBar.destroy();
-            progressBox.destroy();
-            loadingText.destroy();
-            percentText.destroy();
-            assetText.destroy();
-        });
+    loadCustomClasses(){
+        this.loadingBar = new LoadingBar(this);
+        this.background = new Background(900, this);
+        this.player = new Player(this);
     }
+
+    
 
     // Hide mouse and disable right click
     hideMouse() {
@@ -150,10 +124,16 @@ class Stage1Scene extends Scene {
         this.load.image("playerShot", playerShot);
         // Load enemy 1 images
         this.load.image('basicShip', basicShip);
+        this.load.image('basicShipLaser', basicShipLaser);
         // Load background image
         this.load.image('background', background);
         this.load.image("star", star);
-
+        // Load spritesheets
+        this.load.spritesheet('explosion1', explosion1, {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        // Load audio
         this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
         this.load.audio('playerShootingSound', [__dirname + 'src/assets/sound/effects/sfx_wpn_laser7.ogg']);
     }
@@ -169,59 +149,50 @@ class Stage1Scene extends Scene {
      */
 
 
-
-    createBackground() {
-        /**
-          * Create a set number of stars and put them in random positions on the screen at different speeds according to size
-         */
-        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
-
-        this.stars = this.physics.add.group();
-
-        for (var i = 0; i < 90; i++) {
-            this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
-        };
-
-        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
-            item.setScale(Math.random());
-            item.setVelocityY(Math.random() * ((item._scaleX) * 900));
-            // console.log(item);
-        });
-    }
-
-    
-
-    createPlayer() {
-        this.player = this.physics.add.image(450, 850, "player").setScale(0.7);
-        this.player.setCollideWorldBounds(true);
-        this.initShooting();
-    }
-
     createEnemyGroups() {
         this.enemies = this.physics.add.group();
     }
 
     //Create Basic enemy
-    createEnemyShip(type, x, shootDelay, moveSpeed) {
+    createEnemyShip(type, x, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
         // this.basicShip = this.physics.add.image(450, 200, 'basicShip').setScale(0.7);
-        this.ship = this.enemies.create(x, 100, type).setScale(0.8);
+        this.ship = this.enemies.create(x, 300, type).setScale(0.8).setDepth(1);
         this.ship.shootDelay = shootDelay;
         this.ship.shootTimer = 0;
+        this.ship.xOffset = xOffset;
+        this.ship.yOffset = yOffset;
+        this.ship.bulletType = bulletType;
+        this.ship.bulletSpeed = bulletSpeed;
+        this.ship.bulletSound = bulletSound;
 
-        Phaser.Actions.Call(this.enemies.getChildren(), (item) => {
-            item.shootTimer = 60;
-            if (item.shootTimer === item.shootDelay) {
-                console.log('FIRE!');
-                console.log(item.shootTimer);
-            } else {
-                console.log('No yet');
-            }
-            
-        });
+        
         
         this.ship.setVelocityY(moveSpeed);
-        
-        
+    }
+
+    updateEnemyShots() {
+        Phaser.Actions.Call(this.enemies.getChildren(), (item) => {
+            if(item.y > 0) {
+                if (item.shootTimer === item.shootDelay) {
+                    this.createEnemyShot(item, item.xOffset, item.yOffset, item.bulletType, item.bulletSpeed, item.bulletSound);
+                    item.shootTimer = 0;
+                } else {
+                    item.shootTimer ++;
+                }
+            }
+            
+            
+        });
+    }
+
+    createEnemyShot(item, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
+        this.shot = this.enemyShots.create(item.x + xOffset, item.y + yOffset, bulletType);
+        // this.shot.setDepth(-1);
+        if(bulletSound) {
+            bulletSound.play();
+        }
+        this.shot.setVelocityY(bulletSpeed);
+
     }
 
     
@@ -232,10 +203,10 @@ class Stage1Scene extends Scene {
         this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
 
         //Basic Enemy
-        this.basicShipShots = this.physics.add.group();
+        this.enemyShots = this.physics.add.group();
     }
     
-    createShot() {
+    createPlayerShot() {
         this.playerShots.create(this.player.x + 13, this.player.y - 33, 'playerShot');
         this.playerShootSoundEffect.play();
         this.playerShots.create(this.player.x - 13, this.player.y - 33, 'playerShot');
@@ -291,7 +262,7 @@ class Stage1Scene extends Scene {
             if (gamePlay.playerShootCounter === gamePlay.playerShootDelay) {
                 //Shooting
                 
-                this.createShot();
+                this.createPlayerShot();
                 gamePlay.playerShootCounter = 0;
             }
         }
@@ -310,12 +281,14 @@ class Stage1Scene extends Scene {
         }
     }
 
-    moveEnemys() {
-        Phaser.Actions.Call(this.enemiesBasic.getChildren(), (ship) => {
-            
+    removeOffScreenItems() {
+        Phaser.Actions.Call(this.enemyShots.getChildren(), (shot) => {
+            if(shot.y > config.height + 100) {
+                shot.destroy();
+                console.log('removed');
+            }
         })
     }
-
     
 
     moveStars() {
