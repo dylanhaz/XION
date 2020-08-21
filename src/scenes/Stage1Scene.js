@@ -50,6 +50,13 @@ class Stage1Scene extends Scene {
         //Player Ship
         this.player.createPlayer();
 
+        this.anims.create({
+            key: 'explosion1_anim',
+            frames: this.anims.generateFrameNumbers('explosion1'),
+            frameRate: 20,
+            repeat: 0
+        })
+
         // Start Music
         this.startMusic(false, "fight1");
 
@@ -58,13 +65,44 @@ class Stage1Scene extends Scene {
 
         // Create basic enemy
         this.createEnemyGroups();
-        this.createEnemyShip('basicShip', 450, 300, 0, 0, 0, 'basicShipLaser', 600, false);
-        this.createEnemyShip('basicShip', 250, 150, 0, 0, 0, 'basicShipLaser', 600, false);
+        this.basicEnemyShip = this.createEnemyShip('basicShip', 300, 300, 20, 0, 0, 'basicShipLaser', 600, false);
+        this.basicEnemyShip(450);
+        this.basicEnemyShip(250);
 
+        // this.createEnemyShip('basicShip', 300, 250, 150, 20, 0, 0, 'basicShipLaser', 600, false)();
 
-        this.physics.add.overlap(this.playerShots, this.enemies, ()=>{
-            console.log('hit enemy');
+        /**
+         * Check if player lazer hits an enemy
+         */
+        /////
+        ////
+        ///
+        this.physics.add.overlap(this.playerShots, this.enemies, (projectile, enemy)=>{
+            // Create and place the explosion anim at a randome angle and size
+            this.explode = this.add.sprite(projectile.x, projectile.y - 7, 'explosion1');
+            this.explode.rotation = Math.random() * 20;
+            this.explode.setScale(1 + (Math.random() * 2));
+            this.explode.setDepth(2);
+            this.explode.play("explosion1_anim");
+            
+
+                this.playerShotExplosion.play();
+            
+            // Damage the hit enemy
+            enemy.hitPoints -= gamePlay.playerDamage;
+            // Check if the enemy has no more hitpoints
+            if(enemy.hitPoints <= 0) {
+                // If enemy ship hitponts are <= 0, destroy it
+                enemy.destroy();
+            }
+            // Destroy the player shot
+            projectile.destroy();
+            // console.log('hit enemy');
         },null, this);
+
+        /**
+         * Check if player is hit by an enemy attack
+         */
 
         this.physics.add.overlap(this.player, this.enemyShots, ()=>{
             console.log('you got hit!');
@@ -112,7 +150,6 @@ class Stage1Scene extends Scene {
         // Disable mouse rightclick
         this.input.mouse.disableContextMenu();
         // Hide Mouse
-        //Hide mouse
         let canvas = this.sys.canvas;
         canvas.style.cursor = 'none';
     }
@@ -136,6 +173,7 @@ class Stage1Scene extends Scene {
         // Load audio
         this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
         this.load.audio('playerShootingSound', [__dirname + 'src/assets/sound/effects/sfx_wpn_laser7.ogg']);
+        this.load.audio('playerShotExplosion', [__dirname + 'src/assets/sound/effects/player_shot_explosion.ogg'])
     }
     //////////
     //////////
@@ -154,20 +192,21 @@ class Stage1Scene extends Scene {
     }
 
     //Create Basic enemy
-    createEnemyShip(type, x, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
-        // this.basicShip = this.physics.add.image(450, 200, 'basicShip').setScale(0.7);
-        this.ship = this.enemies.create(x, 300, type).setScale(0.8).setDepth(1);
-        this.ship.shootDelay = shootDelay;
-        this.ship.shootTimer = 0;
-        this.ship.xOffset = xOffset;
-        this.ship.yOffset = yOffset;
-        this.ship.bulletType = bulletType;
-        this.ship.bulletSpeed = bulletSpeed;
-        this.ship.bulletSound = bulletSound;
+    createEnemyShip(type, hitPoints, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
 
+        return (x) => {
+            this.ship = this.enemies.create(x, 300, type).setScale(0.8).setDepth(1);
+            this.ship.hitPoints = hitPoints;
+            this.ship.shootDelay = shootDelay;
+            this.ship.shootTimer = 0;
+            this.ship.xOffset = xOffset;
+            this.ship.yOffset = yOffset;
+            this.ship.bulletType = bulletType;
+            this.ship.bulletSpeed = bulletSpeed;
+            this.ship.bulletSound = bulletSound;
+            this.ship.setVelocityY(moveSpeed);
+        }
         
-        
-        this.ship.setVelocityY(moveSpeed);
     }
 
     updateEnemyShots() {
@@ -201,6 +240,7 @@ class Stage1Scene extends Scene {
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
+        this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.2});
 
         //Basic Enemy
         this.enemyShots = this.physics.add.group();

@@ -19,7 +19,8 @@ const menuConfig = {
 
 const gamePlay = {
   playerShootDelay : 60,
-  playerShootCounter : 60
+  playerShootCounter : 0,
+  playerDamage : 10
 }
 
 const config = {
