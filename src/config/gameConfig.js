@@ -18,7 +18,7 @@ const menuConfig = {
 }
 
 const gamePlay = {
-  playerShootDelay : 60,
+  playerShootDelay : 20,
   playerShootCounter : 0,
   playerDamage : 10
 }

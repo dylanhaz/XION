@@ -1,14 +1,8 @@
-import { Scene } from "phaser";
-import{ gamePlay } from '../config/gameConfig';
 import player from '../assets/img/player/player.png';
 
 export default class Player {
     constructor(pointer) {
         this.pointer = pointer
-    }
-
-    playerControlls() {
-        console.log('Update Player!');
     }
 
     createPlayer() {

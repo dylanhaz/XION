@@ -19,6 +19,8 @@ import explosion1 from '../assets/img/spritesheets/explosion-1.png';
  */
 import Background from '../game_scripts/Background';
 import Player from '../game_scripts/Player';
+import Enemy from '../game_scripts/CreateEnemy';
+import { createEnemyShot, updateEnemyShots } from '../game_scripts/enemyShots'
 //////////
 /////////
 ////////
@@ -63,11 +65,14 @@ class Stage1Scene extends Scene {
         // Init cursor keys
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        // Create basic enemy
-        this.createEnemyGroups();
-        this.basicEnemyShip = this.createEnemyShip('basicShip', 300, 300, 20, 0, 0, 'basicShipLaser', 600, false);
-        this.basicEnemyShip(450);
-        this.basicEnemyShip(250);
+        // Testing new Enemy Class
+        this.enemyBasic.createShip(100);
+        this.enemyBasic.createShip(300);
+        this.enemyBasic.createShip(500);
+        this.enemyBasic.createShip(700);
+
+
+        
 
         // this.createEnemyShip('basicShip', 300, 250, 150, 20, 0, 0, 'basicShipLaser', 600, false)();
 
@@ -120,7 +125,7 @@ class Stage1Scene extends Scene {
         this.playerShotTimer();
 
         // Enemy Shooting timer delay
-        this.updateEnemyShots();
+        updateEnemyShots(this);   
 
         // Remove offscreen items
         this.removeOffScreenItems();
@@ -141,6 +146,7 @@ class Stage1Scene extends Scene {
         this.loadingBar = new LoadingBar(this);
         this.background = new Background(900, this);
         this.player = new Player(this);
+        this.enemyBasic = new Enemy('basicShip', 300, 300, 20, 0, 0, 'basicShipLaser', 600, false, this);
     }
 
     
@@ -185,65 +191,14 @@ class Stage1Scene extends Scene {
      * 
      * 
      */
-
-
-    createEnemyGroups() {
-        this.enemies = this.physics.add.group();
-    }
-
-    //Create Basic enemy
-    createEnemyShip(type, hitPoints, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
-
-        return (x) => {
-            this.ship = this.enemies.create(x, 300, type).setScale(0.8).setDepth(1);
-            this.ship.hitPoints = hitPoints;
-            this.ship.shootDelay = shootDelay;
-            this.ship.shootTimer = 0;
-            this.ship.xOffset = xOffset;
-            this.ship.yOffset = yOffset;
-            this.ship.bulletType = bulletType;
-            this.ship.bulletSpeed = bulletSpeed;
-            this.ship.bulletSound = bulletSound;
-            this.ship.setVelocityY(moveSpeed);
-        }
-        
-    }
-
-    updateEnemyShots() {
-        Phaser.Actions.Call(this.enemies.getChildren(), (item) => {
-            if(item.y > 0) {
-                if (item.shootTimer === item.shootDelay) {
-                    this.createEnemyShot(item, item.xOffset, item.yOffset, item.bulletType, item.bulletSpeed, item.bulletSound);
-                    item.shootTimer = 0;
-                } else {
-                    item.shootTimer ++;
-                }
-            }
-            
-            
-        });
-    }
-
-    createEnemyShot(item, xOffset, yOffset, bulletType, bulletSpeed, bulletSound) {
-        this.shot = this.enemyShots.create(item.x + xOffset, item.y + yOffset, bulletType);
-        // this.shot.setDepth(-1);
-        if(bulletSound) {
-            bulletSound.play();
-        }
-        this.shot.setVelocityY(bulletSpeed);
-
-    }
-
-    
     initShooting() {
         // Player
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
-        this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.2});
+        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.8});
+        this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.8});
 
-        //Basic Enemy
-        this.enemyShots = this.physics.add.group();
+        
     }
     
     createPlayerShot() {
