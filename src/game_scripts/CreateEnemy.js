@@ -1,3 +1,4 @@
+import { gamePlay } from '../config/gameConfig';
 export default class Enemy {
     constructor(type, hitPoints, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound, pointer) {
         this.type = type;
@@ -19,12 +20,34 @@ export default class Enemy {
     }
 
     //Create enemy ship
-    createShip(xPosition) {
+    createShip(xPosition, delay) {
+        //First check if it is time to add the ship to the scene based on the delay
+        if ((delay * 100) === gamePlay.globalTimer) {
+             
+            /**
+             * if enemy ship is ready to be created then set the ship's settings and add it to the scene
+             */
+            
+            // Add new ship to enemies group
+            this.pointer.ship = this.pointer.enemies.create(xPosition, -100, this.type).setScale(0.8).setDepth(1);
+            // Set ship's Settings
+            this.pointer.ship.hitPoints = this.hitPoints;
+            this.pointer.ship.shootDelay = this.shootDelay;
+            this.pointer.ship.shootTimer = 0;
+            this.pointer.ship.xOffset = this.xOffset;
+            this.pointer.ship.yOffset = this.yOffset;
+            this.pointer.ship.bulletType = this.bulletType;
+            this.pointer.ship.bulletSpeed = this.bulletSpeed;
+            this.pointer.ship.bulletSound = this.bulletSound;
+            this.pointer.ship.setVelocityY(this.moveSpeed);
 
-        // Set up groups
-        /**
-         * First check if enemies group exists, if not then create it
-         */
+            }
+
+       
+        
+    }
+
+    initGroups() {
         if(!this.pointer.enemies) {
             this.pointer.enemies = this.pointer.physics.add.group();
         }
@@ -34,24 +57,6 @@ export default class Enemy {
         if (!this.pointer.enemyShots) {
             this.pointer.enemyShots = this.pointer.physics.add.group();
         }
-
-
-        /**
-         * Create Ship
-         */
-        // Add new ship to enemies group
-        this.pointer.ship = this.pointer.enemies.create(xPosition, 300, this.type).setScale(0.8).setDepth(1);
-        // Set ship's Settings
-        this.pointer.ship.hitPoints = this.hitPoints;
-        this.pointer.ship.shootDelay = this.shootDelay;
-        this.pointer.ship.shootTimer = 0;
-        this.pointer.ship.xOffset = this.xOffset;
-        this.pointer.ship.yOffset = this.yOffset;
-        this.pointer.ship.bulletType = this.bulletType;
-        this.pointer.ship.bulletSpeed = this.bulletSpeed;
-        this.pointer.ship.bulletSound = this.bulletSound;
-        this.pointer.ship.setVelocityY(this.moveSpeed);
-        
     }
     
 }

@@ -66,10 +66,7 @@ class Stage1Scene extends Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // Testing new Enemy Class
-        this.enemyBasic.createShip(100);
-        this.enemyBasic.createShip(300);
-        this.enemyBasic.createShip(500);
-        this.enemyBasic.createShip(700);
+        
 
 
         
@@ -129,6 +126,19 @@ class Stage1Scene extends Scene {
 
         // Remove offscreen items
         this.removeOffScreenItems();
+
+        // Update global timer with game clock
+        gamePlay.globalTimer ++;
+
+
+
+        /**
+         * Adding enemies to Scene
+         */
+        this.enemyBasic.createShip(225, 1);
+        this.enemyBasic.createShip(450, 10);
+        this.enemyBasic.createShip(675, 15);
+        this.enemyBasic.createShip(200, 25);
     }
 
     
@@ -146,7 +156,9 @@ class Stage1Scene extends Scene {
         this.loadingBar = new LoadingBar(this);
         this.background = new Background(900, this);
         this.player = new Player(this);
-        this.enemyBasic = new Enemy('basicShip', 300, 300, 20, 0, 0, 'basicShipLaser', 600, false, this);
+        this.enemyBasic = new Enemy('basicShip', 300, 300, 80, 0, 0, 'basicShipLaser', 600, false, this);
+        //Create Enemy groups
+        this.enemyBasic.initGroups();
     }
 
     
