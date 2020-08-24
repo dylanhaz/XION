@@ -33,13 +33,16 @@ class Stage1Scene extends Scene {
     }
 
     preload() {
-        this.loadCustomClasses();
-        
-        this.loadingBar.displayProgress();
-
-        this.hideMouse();
-
+        // First load imported assets
         this.loadAssets();
+        // Display loading progress
+        this.loadCustomClasses();
+        // Load preset enemies
+        this.loadingBar.displayProgress();
+        // Load imported classes first
+        this.loadEnemies();
+        // Hide mouse from UI
+        this.hideMouse();
         
         
     }
@@ -156,7 +159,14 @@ class Stage1Scene extends Scene {
         this.loadingBar = new LoadingBar(this);
         this.background = new Background(900, this);
         this.player = new Player(this);
-        this.enemyBasic = new Enemy('basicShip', 300, 300, 80, 0, 0, 'basicShipLaser', 600, false, this);
+    }
+
+    loadEnemies(){
+        this.enemyBasic = new Enemy('basicShip', 300, 100, 80, 0, 0, 'basicShipLaser', 600, false, this);
+
+
+
+
         //Create Enemy groups
         this.enemyBasic.initGroups();
     }
