@@ -57,6 +57,11 @@ export default class Enemy {
         if (!this.pointer.enemyShots) {
             this.pointer.enemyShots = this.pointer.physics.add.group();
         }
+
+        if (!this.pointer.points) {
+            this.pointer.points = this.pointer.physics.add.group();
+            this.pointer.points.enableBody = true;
+        }
     }
     
 }

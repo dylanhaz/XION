@@ -1,4 +1,7 @@
-
+/**
+ * 
+ * Check if it is time for an enemy to shoot based on its delay timer
+ */
 const updateEnemyShots = (pointer)=> {
     
     if (pointer.enemies) {
@@ -16,6 +19,8 @@ const updateEnemyShots = (pointer)=> {
     
 }
 
+
+// Create the enemy laser based on set arguments for that enemy
 const createEnemyShot = (item, xOffset, yOffset, bulletType, bulletSpeed, bulletSound, pointer) => {
     
     pointer.shot = pointer.enemyShots.create(item.x + xOffset, item.y + yOffset, bulletType);
@@ -27,4 +32,4 @@ const createEnemyShot = (item, xOffset, yOffset, bulletType, bulletSpeed, bullet
 
 }
 
-export { createEnemyShot, updateEnemyShots }
+export { updateEnemyShots }
