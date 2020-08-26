@@ -5,6 +5,20 @@ const initEnemyDamageCheck = (pointer) => {
          * Check if player lazer hits an enemy
          */
         pointer.physics.add.overlap(pointer.playerShots, pointer.enemies, (projectile, enemy)=>{
+            // Create bullet explosion animation
+            pointer.anims.create({
+                key: 'explosion1_anim',
+                frames: pointer.anims.generateFrameNumbers('explosion1'),
+                frameRate: 40,
+                repeat: 0
+            });
+            // Create ship explosion animation
+            pointer.anims.create({
+                key: 'explosion2_anim',
+                frames: pointer.anims.generateFrameNumbers('explosion2',),
+                frameRate: 10,
+                repeat: 0
+            });
             // Create and place the explosion anim at a randome angle and size
             // Set depth to random number so explosions apear on top and below the enemy
             pointer.explode = pointer.add.sprite(projectile.x, projectile.y - 7, 'explosion1');
@@ -12,9 +26,13 @@ const initEnemyDamageCheck = (pointer) => {
             pointer.explode.setScale(1 + (Math.random() * 2));
             pointer.explode.setDepth(Math.round(Math.random() * 2));
             pointer.explode.play("explosion1_anim");
+            // remove explosion after finished playing
+            pointer.explode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                pointer.explode.destroy();
+            });
             
             // Play explosion sound
-            pointer.playerShotExplosion.play();
+            pointer.playerShotExplosion.play(); 
             
             // Damage the hit enemy
             enemy.hitPoints -= gamePlay.playerDamage;
@@ -30,6 +48,32 @@ const initEnemyDamageCheck = (pointer) => {
                     setTimeout(() => newPoint.moveToPlayer = true, 1000);
                 }
                 // If enemy ship hitponts are <= 0, destroy it
+                // and play ship explosion animation
+                const explosion = []
+                for (let i = 0; i < 4; i++) {
+                    let shipExplode = pointer.add.sprite(enemy.x, enemy.y, 'explosion2');
+                    explosion.push(shipExplode);
+                    
+                    
+                }
+
+                explosion.forEach((e, i) => {
+                    e.rotation = Math.random() * 20;
+                    e.setScale(1 + (Math.random() * 3));
+                    e.play("explosion2_anim");
+                    e.setDepth(Math.round(Math.random() * 2));
+                    // e.setVelocity((Math.random() * 100) - (Math.random() * 100), (Math.random() * 100) - (Math.random() * 100));
+                    // remove explosion after finished playing
+                    e.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                        e.destroy();
+                        explosion.shift();
+                    });
+                })
+                
+                // pointer.shipExplode.rotation = Math.random() * 20;
+                // pointer.shipExplode.setScale(1 + (Math.random() * 2));
+                // pointer.explode.setDepth(Math.round(Math.random() * 2));
+                
                 enemy.destroy();
             }
             // Destroy the player shot

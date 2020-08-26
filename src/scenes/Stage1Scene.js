@@ -13,6 +13,7 @@ import basicShipLaser from '../assets/img/enemies/basic/basic_ship_laser.png';
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import explosion1 from '../assets/img/spritesheets/explosion-1.png';
+import explosion2 from '../assets/img/spritesheets/explosion-2.png';
 import point from '../assets/img/point.png';
 
 /**
@@ -56,13 +57,6 @@ class Stage1Scene extends Scene {
 
         //Player Ship
         this.player.createPlayer();
-
-        this.anims.create({
-            key: 'explosion1_anim',
-            frames: this.anims.generateFrameNumbers('explosion1'),
-            frameRate: 20,
-            repeat: 0
-        })
 
         // Start Music
         this.startMusic(false, "fight1");
@@ -139,9 +133,11 @@ class Stage1Scene extends Scene {
         this.background = new Background(900, this);
         this.player = new Player(this);
     }
-
+    //  Create enemy types here using the new Enemy class
     loadEnemies(){
-        this.enemyBasic = new Enemy('basicShip', 300, 100, 80, 0, 0, 'basicShipLaser', 600, false, this);
+        this.enemyBasic = new Enemy('basicShip', 300, 100, 80, 0, 0, 'basicShipLaser', 600, () => {
+            this.basicShipLaserSound.play();
+        }, this);
 
 
 
@@ -179,11 +175,18 @@ class Stage1Scene extends Scene {
             frameWidth: 32,
             frameHeight: 32
         });
-        // Load audio
+        this.load.spritesheet('explosion2', explosion2, {
+            frameWidth: 64,
+            frameHeight: 64
+        });
+
+        // LOAD AUDIO FILES HERE!
         this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
         this.load.audio('playerShootingSound', [__dirname + 'src/assets/sound/effects/sfx_wpn_laser7.ogg']);
         this.load.audio('playerShotExplosion', [__dirname + 'src/assets/sound/effects/player_shot_explosion.ogg']);
         this.load.audio('pointPickup', [__dirname + 'src/assets/sound/effects/point_pickup.ogg']);
+        this.load.audio('basicShipLaser', [__dirname + 'src/assets/sound/effects/ship_1_laser.ogg']);
+        
     }
     //////////
     //////////
@@ -198,7 +201,9 @@ class Stage1Scene extends Scene {
 
     initMiscSoundEffects() {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
+        this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.3})
     }
+    
 
     initShooting() {
         // Player
