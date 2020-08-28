@@ -14,6 +14,8 @@ import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import explosion1 from '../assets/img/spritesheets/explosion-1.png';
 import explosion2 from '../assets/img/spritesheets/explosion-2.png';
+import explosion3 from '../assets/img/spritesheets/explosion-3.png';
+import explosion6 from '../assets/img/spritesheets/explosion-6.png';
 import point from '../assets/img/point.png';
 
 /**
@@ -24,6 +26,7 @@ import Player from '../game_scripts/Player';
 import Enemy from '../game_scripts/CreateEnemy';
 import { updateEnemyShots } from '../game_scripts/enemyShots';
 import { initEnemyDamageCheck, movePoints, checkOverlapPoints } from '../game_scripts/enemyDamage';
+import { initPlayerDamageCheck, checkEnemyOffScreen, loadPlayerDamageAnimations } from '../game_scripts/playerDamage'
 //////////
 /////////
 ////////
@@ -48,6 +51,7 @@ class Stage1Scene extends Scene {
         this.hideMouse();
         
         
+        
     }
 
     create() {
@@ -59,7 +63,7 @@ class Stage1Scene extends Scene {
         this.player.createPlayer();
 
         // Start Music
-        this.startMusic(false, "fight1");
+        this.startMusic(true, "fight1");
 
         // Init misc sound effects
         this.initMiscSoundEffects();
@@ -71,15 +75,11 @@ class Stage1Scene extends Scene {
         initEnemyDamageCheck(this);
         // Event listener for updating score once point orbs reach player
         checkOverlapPoints(this, this.pointPickup);
-        
+        // Method for handling damage done to player
+        initPlayerDamageCheck(this);
+        // Load explosions related to damaging player
+        loadPlayerDamageAnimations(this);
 
-        /**
-         * Check if player is hit by an enemy attack
-         */
-
-        this.physics.add.overlap(this.player, this.enemyShots, ()=>{
-            console.log('you got hit!');
-        },null, this);
         
     }
     
@@ -104,6 +104,11 @@ class Stage1Scene extends Scene {
 
         // Move points towards player
         movePoints(this);
+
+        // Damage Player if Enemy Reaches Bottom
+        checkEnemyOffScreen(this);
+
+        
         
 
 
@@ -115,6 +120,10 @@ class Stage1Scene extends Scene {
         this.enemyBasic.createShip(450, 10);
         this.enemyBasic.createShip(675, 15);
         this.enemyBasic.createShip(200, 25);
+        this.enemyBasic.createShip(150, 35);
+        this.enemyBasic.createShip(300, 38);
+        this.enemyBasic.createShip(450, 41);
+        this.enemyBasic.createShip(600, 44);
     }
 
     
@@ -135,8 +144,8 @@ class Stage1Scene extends Scene {
     }
     //  Create enemy types here using the new Enemy class
     loadEnemies(){
-        this.enemyBasic = new Enemy('basicShip', 300, 100, 80, 0, 0, 'basicShipLaser', 600, () => {
-            this.basicShipLaserSound.play();
+        this.enemyBasic = new Enemy('basicShip', 300, 100, 85, 0, 0, 'basicShipLaser', 600, () => {
+            // this.basicShipLaserSound.play();
         }, this);
 
 
@@ -179,6 +188,14 @@ class Stage1Scene extends Scene {
             frameWidth: 64,
             frameHeight: 64
         });
+        this.load.spritesheet('explosion3', explosion3, {
+            frameWidth: 128,
+            frameHeight: 80
+        });
+        this.load.spritesheet('explosion6', explosion6, {
+            frameWidth: 48,
+            frameHeight: 48
+        });
 
         // LOAD AUDIO FILES HERE!
         this.load.audio('fight1', [__dirname + 'src/assets/sound/music/fight1.ogg']);
@@ -186,6 +203,7 @@ class Stage1Scene extends Scene {
         this.load.audio('playerShotExplosion', [__dirname + 'src/assets/sound/effects/player_shot_explosion.ogg']);
         this.load.audio('pointPickup', [__dirname + 'src/assets/sound/effects/point_pickup.ogg']);
         this.load.audio('basicShipLaser', [__dirname + 'src/assets/sound/effects/ship_1_laser.ogg']);
+        this.load.audio('basicShipDeath', [__dirname + 'src/assets/sound/effects/ship_1_death.ogg']);
         
     }
     //////////
@@ -201,7 +219,8 @@ class Stage1Scene extends Scene {
 
     initMiscSoundEffects() {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
-        this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.3})
+        this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.5});
+        this.basicShipDeath = this.sound.add('basicShipDeath', {volume: 0.7});
     }
     
 
@@ -209,7 +228,7 @@ class Stage1Scene extends Scene {
         // Player
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.8});
+        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 1});
         this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.8});
 
         

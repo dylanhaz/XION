@@ -6,7 +6,7 @@ const updateEnemyShots = (pointer)=> {
     
     if (pointer.enemies) {
         Phaser.Actions.Call(pointer.enemies.getChildren(), (item) => {
-            if(item.y > 0) {
+            if(item.y > -5) {
                 if (item.shootTimer === item.shootDelay) {
                     
                     createEnemyShot(item, item.xOffset, item.yOffset, item.bulletType, item.bulletSpeed, item.bulletSound, pointer);
@@ -25,7 +25,9 @@ const updateEnemyShots = (pointer)=> {
 const createEnemyShot = (item, xOffset, yOffset, bulletType, bulletSpeed, bulletSoundCallback, pointer) => {
     
     pointer.shot = pointer.enemyShots.create(item.x + xOffset, item.y + yOffset, bulletType);
-    bulletSoundCallback();
+    if (bulletSoundCallback) {
+        bulletSoundCallback();
+    }
     
     
     // console.log(item);

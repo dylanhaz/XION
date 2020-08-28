@@ -5,6 +5,7 @@ const initEnemyDamageCheck = (pointer) => {
          * Check if player lazer hits an enemy
          */
         pointer.physics.add.overlap(pointer.playerShots, pointer.enemies, (projectile, enemy)=>{
+            
             // Create bullet explosion animation
             pointer.anims.create({
                 key: 'explosion1_anim',
@@ -48,13 +49,21 @@ const initEnemyDamageCheck = (pointer) => {
                     setTimeout(() => newPoint.moveToPlayer = true, 1000);
                 }
                 // If enemy ship hitponts are <= 0, destroy it
-                // and play ship explosion animation
+                // and play ship explosion animation and sound
+                // First, check what type of enemy to match sound
+                switch (enemy.texture.key) {
+                    case "basicShip":
+                        pointer.basicShipDeath.play()
+                        break;
+                
+                    default:
+                        break;
+                }
+                
                 const explosion = []
                 for (let i = 0; i < 4; i++) {
                     let shipExplode = pointer.add.sprite(enemy.x, enemy.y, 'explosion2');
                     explosion.push(shipExplode);
-                    
-                    
                 }
 
                 explosion.forEach((e, i) => {
@@ -62,7 +71,6 @@ const initEnemyDamageCheck = (pointer) => {
                     e.setScale(1 + (Math.random() * 3));
                     e.play("explosion2_anim");
                     e.setDepth(Math.round(Math.random() * 2));
-                    // e.setVelocity((Math.random() * 100) - (Math.random() * 100), (Math.random() * 100) - (Math.random() * 100));
                     // remove explosion after finished playing
                     e.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                         e.destroy();

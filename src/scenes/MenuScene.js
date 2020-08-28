@@ -13,6 +13,7 @@ import customizeShipKey_selected from '../assets/img/customize-ship_selected.png
 
 
 
+
 class MenuScene extends Scene {
     constructor() {
         super('MenuScene');
@@ -52,6 +53,7 @@ class MenuScene extends Scene {
 
         // Load sound effects
         this.load.audio('menuClick', __dirname + 'src/assets/sound/effects/menu_selection_click.ogg');
+        this.load.audio('neonFlicker', [__dirname + 'src/assets/sound/effects/neon_flicker.ogg'])
         }
 
         
@@ -67,7 +69,7 @@ class MenuScene extends Scene {
         this.createMenuKeys();
 
         // Add background music
-        this.startMusic(false, 'menu_music');
+        this.startMusic(true, 'menu_music');
 
 
         /**
@@ -140,7 +142,7 @@ class MenuScene extends Scene {
 
         Phaser.Actions.Call(this.stars.getChildren(), (item) => {
             item.setScale(Math.random());
-            item.setVelocityY(Math.random() * ((item._scaleX) * 15));
+            item.setVelocityY(Math.random() * ((item._scaleX) * 150));
             // console.log(item);
         });
 
@@ -166,8 +168,10 @@ class MenuScene extends Scene {
     startMusic(play, key) {
         // Add and start background music
         this.menuMusic = this.sound.add(key, musicConfig);
+        this.neonFlicker = this.sound.add('neonFlicker', {loop: -1, volume: 1});
         if(play) {
             this.menuMusic.play();
+            this.neonFlicker.play();
         }
     }
 
@@ -210,6 +214,8 @@ class MenuScene extends Scene {
          */
         this.enterKey.on('down', () => {
             if(menuConfig.selection === 0) {
+                this.menuMusic.stop();
+                this.neonFlicker.stop();
                 this.scene.start('Stage1Scene')
             } else if(menuConfig.selection === 1) {
                 alert('customize ship');
