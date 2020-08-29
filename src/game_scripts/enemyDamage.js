@@ -99,6 +99,11 @@ const movePoints = (pointer) => {
         if (point.moveToPlayer === true) {
             pointer.physics.moveToObject(point, pointer.player, 1000);
         };
+        if (gamePlay.gameRunning === false) {
+            Phaser.Actions.Call(pointer.points.getChildren(), (point) => {
+                point.destroy();
+            });
+        };
     });
 }
 

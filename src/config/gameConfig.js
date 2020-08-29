@@ -24,7 +24,7 @@ const gamePlay = {
   playerDamage : 10,
   playerSpray : 7,
   playerPoints : 0,
-  playerHitPoints : 10,
+  playerHitPoints : 1,
   gameRunning : true
 }
 
