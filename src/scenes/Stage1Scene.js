@@ -271,33 +271,35 @@ class Stage1Scene extends Scene {
         const gun3 = this.player.x + 23;
         const gun4 = this.player.x - 23;
         const gunYPosition = this.player.y - 33;
-        this.playerShots.create(gun1, gunYPosition, 'playerShot');
-        this.playerShootSoundEffect.play();
-        this.playerShots.create(gun2, gunYPosition, 'playerShot');
-        // Set spray bullets for first guns
-        for (let i = 0; i < gamePlay.playerSpray; i++) {
-            setTimeout(() => {
-                this.playerShots.create(gun1, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
-                this.playerShots.create(gun2, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
-            }, 10 * i)
-            
-        }
-        setTimeout(()=> {
-            if(this.shoot.isDown) {
-
-                this.playerShots.create(gun3, gunYPosition, 'playerShot');
-                this.playerShootSoundEffect.play();
-                this.playerShots.create(gun4, gunYPosition, 'playerShot');
-
-                // Set spray bullets for 2nd guns
-                for (let i = 0; i < gamePlay.playerSpray; i++) {
-                    setTimeout(() => {
-                        this.playerShots.create(gun3, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
-                        this.playerShots.create(gun4, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
-                    }, 10 * i)
-                }
+        if (gamePlay.gameRunning === true) {
+            this.playerShots.create(gun1, gunYPosition, 'playerShot');
+            this.playerShootSoundEffect.play();
+            this.playerShots.create(gun2, gunYPosition, 'playerShot');
+            // Set spray bullets for first guns
+            for (let i = 0; i < gamePlay.playerSpray; i++) {
+                setTimeout(() => {
+                    this.playerShots.create(gun1, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
+                    this.playerShots.create(gun2, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+                }, 10 * i)
+                
             }
-        }, gamePlay.playerShootDelay * 3);
+            setTimeout(()=> {
+                if(this.shoot.isDown) {
+    
+                    this.playerShots.create(gun3, gunYPosition, 'playerShot');
+                    this.playerShootSoundEffect.play();
+                    this.playerShots.create(gun4, gunYPosition, 'playerShot');
+    
+                    // Set spray bullets for 2nd guns
+                    for (let i = 0; i < gamePlay.playerSpray; i++) {
+                        setTimeout(() => {
+                            this.playerShots.create(gun3, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
+                            this.playerShots.create(gun4, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+                        }, 10 * i)
+                    }
+                }
+            }, gamePlay.playerShootDelay * 3);
+        }
         
         
     }
