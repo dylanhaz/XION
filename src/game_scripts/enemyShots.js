@@ -1,12 +1,11 @@
-/**
- * 
- * Check if it is time for an enemy to shoot based on its delay timer
- */
+import{ gamePlay, config } from '../config/gameConfig';
+ //Check if it is time for an enemy to shoot based on its delay timer
+ 
 const updateEnemyShots = (pointer)=> {
     
-    if (pointer.enemies) {
+    if (pointer.enemies && gamePlay.playerHitPoints > 0) {
         Phaser.Actions.Call(pointer.enemies.getChildren(), (item) => {
-            if(item.y > -5) {
+            if(item.y > -300) {
                 if (item.shootTimer === item.shootDelay) {
                     
                     createEnemyShot(item, item.xOffset, item.yOffset, item.bulletType, item.bulletSpeed, item.bulletSound, pointer);

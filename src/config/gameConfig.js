@@ -3,7 +3,7 @@ import MenuScene from "../scenes/MenuScene"
 import Stage1Scene from "../scenes/Stage1Scene";
 
 const musicConfig = {
-  mute: true,
+  mute: false,
   volume: 0.4,
   rate: 1,
   detune: 0,
@@ -19,11 +19,13 @@ const menuConfig = {
 
 const gamePlay = {
   globalTimer : 0,
-  playerShootDelay : 40,
+  playerShootDelay : 20,
   playerShootCounter : 0,
   playerDamage : 10,
+  playerSpray : 7,
   playerPoints : 0,
-  playerHitPoints : 10
+  playerHitPoints : 10,
+  gameRunning : true
 }
 
 const config = {

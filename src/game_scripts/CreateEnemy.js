@@ -29,7 +29,7 @@ export default class Enemy {
              */
             
             // Add new ship to enemies group
-            this.pointer.ship = this.pointer.enemies.create(xPosition, 600, this.type).setScale(0.8).setDepth(1);
+            this.pointer.ship = this.pointer.enemies.create(xPosition, -100, this.type).setScale(0.8).setDepth(1);
             // Set ship's Settings
             this.pointer.ship.hitPoints = this.hitPoints;
             this.pointer.ship.shootDelay = this.shootDelay;

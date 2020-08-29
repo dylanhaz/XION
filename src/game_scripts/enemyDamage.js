@@ -81,6 +81,9 @@ const initEnemyDamageCheck = (pointer) => {
                 // pointer.shipExplode.rotation = Math.random() * 20;
                 // pointer.shipExplode.setScale(1 + (Math.random() * 2));
                 // pointer.explode.setDepth(Math.round(Math.random() * 2));
+
+                //Shake the Camera
+                pointer.cameras.main.shake(150, 0.05);
                 
                 enemy.destroy();
             }

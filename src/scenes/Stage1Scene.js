@@ -15,8 +15,11 @@ import background from '../assets/img/starfield_alpha.png';
 import explosion1 from '../assets/img/spritesheets/explosion-1.png';
 import explosion2 from '../assets/img/spritesheets/explosion-2.png';
 import explosion3 from '../assets/img/spritesheets/explosion-3.png';
+import playerDeathExplosion from '../assets/img/spritesheets/player-death-explosion.png';
 import explosion6 from '../assets/img/spritesheets/explosion-6.png';
 import point from '../assets/img/point.png';
+import pixelFont from '../assets/font/font.png';
+import pixelFontXML from '../assets/font/font.xml';
 
 /**
  * game_scripts
@@ -26,7 +29,7 @@ import Player from '../game_scripts/Player';
 import Enemy from '../game_scripts/CreateEnemy';
 import { updateEnemyShots } from '../game_scripts/enemyShots';
 import { initEnemyDamageCheck, movePoints, checkOverlapPoints } from '../game_scripts/enemyDamage';
-import { initPlayerDamageCheck, checkEnemyOffScreen, loadPlayerDamageAnimations } from '../game_scripts/playerDamage'
+import { initPlayerDamageCheck, checkEnemyOffScreen, loadPlayerDamageAnimations, checkIfPlayerAlive} from '../game_scripts/playerDamage'
 //////////
 /////////
 ////////
@@ -49,8 +52,8 @@ class Stage1Scene extends Scene {
         this.loadEnemies();
         // Hide mouse from UI
         this.hideMouse();
-        
-        
+        // Load custom font
+        this.load.bitmapFont('pixelFont', pixelFont, pixelFontXML);
         
     }
 
@@ -80,6 +83,16 @@ class Stage1Scene extends Scene {
         // Load explosions related to damaging player
         loadPlayerDamageAnimations(this);
 
+        //Display Scoring
+        this.scoreLabel = this.add.bitmapText(20, 5, 'pixelFont', `SCORE ${gamePlay.playerPoints}`, 50).setDepth(10);
+        //Display Ship Health
+        this.shipHealth = this.add.bitmapText(config.width - 130, 5, 'pixelFont', `HP ${gamePlay.playerHitPoints}`, 50).setDepth(10);
+
+
+    
+        
+       
+
         
     }
     
@@ -108,6 +121,16 @@ class Stage1Scene extends Scene {
         // Damage Player if Enemy Reaches Bottom
         checkEnemyOffScreen(this);
 
+        // Update Player Score
+        this.scoreLabel.text = `SCORE ${gamePlay.playerPoints}`;
+        // Update Player HP
+        if (gamePlay.playerHitPoints > -1 ) {
+            this.shipHealth.text = `HP ${gamePlay.playerHitPoints}`;
+        }
+
+        // Check if player is still alive
+        checkIfPlayerAlive(this);
+
         
         
 
@@ -116,14 +139,16 @@ class Stage1Scene extends Scene {
         /**
          * Adding enemies to Scene
          */
-        this.enemyBasic.createShip(225, 1);
-        this.enemyBasic.createShip(450, 10);
-        this.enemyBasic.createShip(675, 15);
-        this.enemyBasic.createShip(200, 25);
-        this.enemyBasic.createShip(150, 35);
-        this.enemyBasic.createShip(300, 38);
-        this.enemyBasic.createShip(450, 41);
-        this.enemyBasic.createShip(600, 44);
+        if (gamePlay.playerHitPoints > 0) {
+            this.enemyBasic.createShip(225, 1);
+            this.enemyBasic.createShip(450, 10);
+            this.enemyBasic.createShip(675, 15);
+            this.enemyBasic.createShip(200, 25);
+            this.enemyBasic.createShip(150, 35);
+            this.enemyBasic.createShip(300, 40);
+            this.enemyBasic.createShip(450, 45);
+            this.enemyBasic.createShip(600, 50);
+        }
     }
 
     
@@ -144,8 +169,8 @@ class Stage1Scene extends Scene {
     }
     //  Create enemy types here using the new Enemy class
     loadEnemies(){
-        this.enemyBasic = new Enemy('basicShip', 300, 100, 85, 0, 0, 'basicShipLaser', 600, () => {
-            // this.basicShipLaserSound.play();
+        this.enemyBasic = new Enemy('basicShip', 200, 300, 85, 0, 0, 'basicShipLaser', 600, () => {
+            this.basicShipLaserSound.play();
         }, this);
 
 
@@ -192,6 +217,10 @@ class Stage1Scene extends Scene {
             frameWidth: 128,
             frameHeight: 80
         });
+        this.load.spritesheet('playerDeathExplosion', playerDeathExplosion, {
+            frameWidth: 92,
+            frameHeight: 91
+        });
         this.load.spritesheet('explosion6', explosion6, {
             frameWidth: 48,
             frameHeight: 48
@@ -204,6 +233,8 @@ class Stage1Scene extends Scene {
         this.load.audio('pointPickup', [__dirname + 'src/assets/sound/effects/point_pickup.ogg']);
         this.load.audio('basicShipLaser', [__dirname + 'src/assets/sound/effects/ship_1_laser.ogg']);
         this.load.audio('basicShipDeath', [__dirname + 'src/assets/sound/effects/ship_1_death.ogg']);
+        this.load.audio('playerDeath', [__dirname + 'src/assets/sound/effects/player_death.ogg']);
+        this.load.audio('shipHitBottom', [__dirname + 'src/assets/sound/effects/ship_hit_bottom.ogg']);
         
     }
     //////////
@@ -235,15 +266,36 @@ class Stage1Scene extends Scene {
     }
     
     createPlayerShot() {
-        this.playerShots.create(this.player.x + 13, this.player.y - 33, 'playerShot');
+        const gun1 = this.player.x + 13;
+        const gun2 = this.player.x - 13;
+        const gun3 = this.player.x + 23;
+        const gun4 = this.player.x - 23;
+        const gunYPosition = this.player.y - 33;
+        this.playerShots.create(gun1, gunYPosition, 'playerShot');
         this.playerShootSoundEffect.play();
-        this.playerShots.create(this.player.x - 13, this.player.y - 33, 'playerShot');
+        this.playerShots.create(gun2, gunYPosition, 'playerShot');
+        // Set spray bullets for first guns
+        for (let i = 0; i < gamePlay.playerSpray; i++) {
+            setTimeout(() => {
+                this.playerShots.create(gun1, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
+                this.playerShots.create(gun2, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+            }, 10 * i)
+            
+        }
         setTimeout(()=> {
             if(this.shoot.isDown) {
 
-                this.playerShots.create(this.player.x + 23, this.player.y - 33, 'playerShot');
+                this.playerShots.create(gun3, gunYPosition, 'playerShot');
                 this.playerShootSoundEffect.play();
-                this.playerShots.create(this.player.x - 23, this.player.y - 33, 'playerShot');
+                this.playerShots.create(gun4, gunYPosition, 'playerShot');
+
+                // Set spray bullets for 2nd guns
+                for (let i = 0; i < gamePlay.playerSpray; i++) {
+                    setTimeout(() => {
+                        this.playerShots.create(gun3, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
+                        this.playerShots.create(gun4, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+                    }, 10 * i)
+                }
             }
         }, gamePlay.playerShootDelay * 3);
         
@@ -252,9 +304,9 @@ class Stage1Scene extends Scene {
 
     startMusic(play, key) {
         // Add and start background music
-        this.menuMusic = this.sound.add(key, musicConfig);
+        this.music = this.sound.add(key, musicConfig);
         if(play) {
-            this.menuMusic.play();
+            this.music.play();
         }
     }
     //////////
