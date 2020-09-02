@@ -67,7 +67,7 @@ class Stage1Scene extends Scene {
         }
 
 
-
+      
 
 
         // Add Background
@@ -101,14 +101,18 @@ class Stage1Scene extends Scene {
         this.shipHealth = this.add.bitmapText(config.width - 130, 5, 'pixelFont', `HP ${gamePlay.playerHitPoints}`, 50).setDepth(10);
 
 
-    
-        
+        // Sets the collision box sizes for game objects
+        this.setCollisionBoxes();
        
 
         
     }
     
     update() {
+
+        
+
+
         // Move stars in background
         this.moveStars();
         // Player Control
@@ -197,9 +201,9 @@ class Stage1Scene extends Scene {
             this.basicShipLaserSound.play();
         }, false, this);
 
-        this.enemyBasicTwo = new Enemy('basicShip', 500, 100, 200, enemyBasicShotPositions, 'basicShipLaser', 800, () => {
+        this.enemyBasicTwo = new Enemy('basicShip', 500, 90, 65, enemyBasicShotPositions, 'basicShipLaser', 300, () => {
             this.basicShipLaserSound.play();
-        }, false, this);
+        }, true, this);
 
 
         //Create Enemy groups
@@ -328,6 +332,15 @@ class Stage1Scene extends Scene {
         }
         
         
+    }
+
+    // Set object collision boxes
+    setCollisionBoxes() {
+        this.defineBoxSize(this.player, 50);
+    }
+
+    defineBoxSize(object, boxOffset) {
+        object.setSize(object.frame.width - boxOffset, object.frame.height - boxOffset, false).setOffset(boxOffset / 2, boxOffset / 2)
     }
 
     startMusic(play, key) {

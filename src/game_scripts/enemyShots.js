@@ -30,7 +30,11 @@ const createEnemyShot = (item, bulletPositions, bulletType, bulletSpeed, bulletS
         if (bulletSoundCallback) {
             bulletSoundCallback();
         }
-        pointer.shot.setVelocityY(bulletSpeed);
+        if (trackPlayer) {
+            pointer.physics.moveToObject(pointer.shot, pointer.player, bulletSpeed)
+        } else {
+            pointer.shot.setVelocityY(bulletSpeed);
+        }
     }
 
 }
