@@ -1,6 +1,6 @@
 import { gamePlay } from '../config/gameConfig';
 export default class Enemy {
-    constructor(type, hitPoints, shootDelay, moveSpeed, xOffset, yOffset, bulletType, bulletSpeed, bulletSound, pointer) {
+    constructor(type, hitPoints, shootDelay, moveSpeed, bulletPositions, bulletType, bulletSpeed, bulletSound, pointer) {
         this.type = type;
         this.hitPoints = hitPoints;
         this.shootDelay = shootDelay;
@@ -8,8 +8,7 @@ export default class Enemy {
         /**
          * Settings for ship basic attack
          */
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+        this.bulletPositions = bulletPositions;
         this.bulletType = bulletType;
         this.bulletSpeed = bulletSpeed;
         this.bulletSound = bulletSound;
@@ -34,8 +33,7 @@ export default class Enemy {
             this.pointer.ship.hitPoints = this.hitPoints;
             this.pointer.ship.shootDelay = this.shootDelay;
             this.pointer.ship.shootTimer = 0;
-            this.pointer.ship.xOffset = this.xOffset;
-            this.pointer.ship.yOffset = this.yOffset;
+            this.pointer.ship.bulletPositions = this.bulletPositions;
             this.pointer.ship.bulletType = this.bulletType;
             this.pointer.ship.bulletSpeed = this.bulletSpeed;
             this.pointer.ship.bulletSound = this.bulletSound;

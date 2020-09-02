@@ -93,7 +93,7 @@ const checkIfPlayerAlive = (pointer) => {
         }
         // Create Player debris
         for (let i = 0; i < 60; i++) {
-            let debris = pointer.playerDebris.create(pointer.player.x, pointer.player.y, 'point').setScale(1 + Math.random() * 2);
+            let debris = pointer.playerDebris.create(pointer.player.x, pointer.player.y, 'point').setScale(1 + Math.random() * 1.3);
             debris.setVelocity((Math.random() * 600) - (Math.random() * 600), (Math.random() * 600) - (Math.random() * 600));
             // Set a timeout of 1 second before moving the points towards the player's position
             setTimeout(() => Phaser.Actions.Call(pointer.playerDebris.getChildren(), (debris)=> { debris.destroy();}), 10000);

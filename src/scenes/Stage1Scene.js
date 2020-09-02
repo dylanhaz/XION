@@ -168,8 +168,20 @@ class Stage1Scene extends Scene {
         this.player = new Player(this);
     }
     //  Create enemy types here using the new Enemy class
+    //  shotPositions is writen as an object with 2 arrays
+    //  first one is for x, seconds is for y 
+    // Example
+    // {
+    //     x: [10, 20, 30, 40],
+    //     y: [5, 10, 15, 20]
+    // }
     loadEnemies(){
-        this.enemyBasic = new Enemy('basicShip', 200, 300, 85, 0, 0, 'basicShipLaser', 600, () => {
+        const enemyBasicShotPositions = {
+            x: [0],
+            y: [0]
+        }
+
+        this.enemyBasic = new Enemy('basicShip', 200, 300, 85, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
             this.basicShipLaserSound.play();
         }, this);
 
@@ -278,8 +290,8 @@ class Stage1Scene extends Scene {
             // Set spray bullets for first guns
             for (let i = 0; i < gamePlay.playerSpray; i++) {
                 setTimeout(() => {
-                    this.playerShots.create(gun1, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
-                    this.playerShots.create(gun2, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+                    this.playerShots.create(gun1, gunYPosition, 'playerShot').setVelocityX(30 * (i + 1) + (Math.random() * 10));
+                    this.playerShots.create(gun2, gunYPosition, 'playerShot').setVelocityX(-30 * (i + 1) + (Math.random() * 10));
                 }, 10 * i)
                 
             }
@@ -293,8 +305,8 @@ class Stage1Scene extends Scene {
                     // Set spray bullets for 2nd guns
                     for (let i = 0; i < gamePlay.playerSpray; i++) {
                         setTimeout(() => {
-                            this.playerShots.create(gun3, gunYPosition, 'playerShot').setVelocityX(15 * (i + 1) + (Math.random() * 10));
-                            this.playerShots.create(gun4, gunYPosition, 'playerShot').setVelocityX(-15 * (i + 1) + (Math.random() * 10));
+                            this.playerShots.create(gun3, gunYPosition, 'playerShot').setVelocityX(30 * (i + 1) + (Math.random() * 10));
+                            this.playerShots.create(gun4, gunYPosition, 'playerShot').setVelocityX(-30 * (i + 1) + (Math.random() * 10));
                         }, 10 * i)
                     }
                 }
