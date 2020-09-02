@@ -19,12 +19,12 @@ const menuConfig = {
 
 const gamePlay = {
   globalTimer : 0,
-  playerShootDelay : 20,
+  playerShootDelay : 60,
   playerShootCounter : 0,
   playerDamage : 10,
-  playerSpray : 7,
+  playerSpray : 1,
   playerPoints : 0,
-  playerHitPoints : 1,
+  playerHitPoints : 10,
   gameRunning : true
 }
 

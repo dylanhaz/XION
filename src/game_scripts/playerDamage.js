@@ -41,12 +41,26 @@ const initPlayerDamageCheck = (pointer) => {
                 break;
         
             default:
+                gamePlay.playerHitPoints -= 1;
+                pointer.defaultExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'explosion6');
+                pointer.defaultExplode.rotation = Math.random() * 20;
+                pointer.defaultExplode.setScale(1.75);
+                pointer.defaultExplode.setDepth(Math.round(Math.random() * 2));
+                pointer.defaultExplode.play('explosion6_anim');
+                projectile.destroy();
                 break;
         }
 
-        pointer.basicExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-            pointer.basicExplode.destroy();
-        });
+        if(pointer.basicExplode) {
+            pointer.basicExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                pointer.basicExplode.destroy();
+            });
+        }
+        if(pointer.defaultExplode) {
+            pointer.defaultExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                pointer.basicExplode.destroy();
+            });
+        }
 
         //Shake the Camera
         if (gamePlay.playerHitPoints > 0) {

@@ -58,6 +58,18 @@ class Stage1Scene extends Scene {
     }
 
     create() {
+        // FOR DEVELOPMENT TESTING ONLY
+        const testing = false;
+        if (testing) {
+            gamePlay.playerShootDelay = 20;
+            gamePlay.playerSpray = 10;
+            gamePlay.playerHitPoints = 99999999;
+        }
+
+
+
+
+
         // Add Background
         this.background.createBackground();
 
@@ -141,7 +153,7 @@ class Stage1Scene extends Scene {
          */
         if (gamePlay.playerHitPoints > 0) {
             this.enemyBasic.createShip(225, 1);
-            this.enemyBasic.createShip(450, 10);
+            this.enemyBasicTwo.createShip(450, 10);
             this.enemyBasic.createShip(675, 15);
             this.enemyBasic.createShip(200, 25);
             this.enemyBasic.createShip(150, 35);
@@ -183,9 +195,11 @@ class Stage1Scene extends Scene {
 
         this.enemyBasic = new Enemy('basicShip', 200, 300, 85, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
             this.basicShipLaserSound.play();
-        }, this);
+        }, false, this);
 
-
+        this.enemyBasicTwo = new Enemy('basicShip', 500, 100, 200, enemyBasicShotPositions, 'basicShipLaser', 800, () => {
+            this.basicShipLaserSound.play();
+        }, false, this);
 
 
         //Create Enemy groups
