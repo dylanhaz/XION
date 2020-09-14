@@ -57,6 +57,30 @@ const initPlayerDamageCheck = (pointer) => {
                 }
                 projectile.destroy();
                 break;
+            case "bossOneShot":
+                gamePlay.playerHitPoints -= 1;
+                pointer.bossShotExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'arkShotExplosion');
+
+                if (!pointer.bossShotExplode.isPlaying) {
+                    pointer.bossShotExplode.rotation = Math.random() * 20;
+                    pointer.bossShotExplode.setScale(1.75);
+                    pointer.bossShotExplode.setDepth(Math.round(Math.random() * 2));
+                    pointer.bossShotExplode.play('arkShotExplosion_anim');
+                }
+                projectile.destroy();
+                break;
+            case "bossOneTrackshot":
+                gamePlay.playerHitPoints -= 1;
+                pointer.bossShotExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'arkShotExplosion');
+
+                if (!pointer.bossShotExplode.isPlaying) {
+                    pointer.bossShotExplode.rotation = Math.random() * 20;
+                    pointer.bossShotExplode.setScale(1.75);
+                    pointer.bossShotExplode.setDepth(Math.round(Math.random() * 2));
+                    pointer.bossShotExplode.play('arkShotExplosion_anim');
+                }
+                projectile.destroy();
+                break;
         
             default:
                 gamePlay.playerHitPoints -= 1;

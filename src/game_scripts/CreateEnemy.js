@@ -7,7 +7,7 @@ export default class Enemy {
      * @param {number} hitPoints - Ship hitpoints
      * @param {number} shootDelay - Delay between shots
      * @param {number} moveSpeed - Vertical ship speed
-     * @param {object} bulletPositions Set x and y position of each bullet relative to ship's position written in an object with TWO ARRAYS, FIRST for x and SECOND for y. Example: {[0, 10][0, -15]} Will create a bullet at x + 0, y + 0, and another bullet at x + 10, y -15.
+     * @param {object} bulletPositions Set x and y position of each bullet relative to ship's position written in an object with TWO ARRAYS, FIRST for x and SECOND for y. Example: {[0, 10][0, -15]} Will create a bullet at x + 0, y + 0, and another bullet at x + 10, y -15. If you want to add a delay to the shots then add a 3rd array called "delay" Ex. delay : [0, 200, 1000]
      * @param {string} bulletType - Bullet sprite key
      * @param {number} bulletSpeed -Vertical bullet speed, if bullet tracks player bulletSpeed will be used for that argument instead
      * @param {Enemy~requestCallback} bulletSound - The callback that handles playing the sound effect of the bullet shot 

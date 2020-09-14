@@ -14,6 +14,10 @@ import basicShipLaser from '../assets/img/enemies/basic/basic_ship_laser.png';
 // Ark Shooter
 import arkShooter from '../assets/img/enemies/ark-shooter/ark-shooter.png';
 import arkShot from '../assets/img/enemies/ark-shooter/ark-shot.png';
+// Stage 1 Boss
+import stageOneBoss from '../assets/img/enemies/stage-1-boss/stage-1-boss-ship.png';
+import bossOneShot from '../assets/img/enemies/stage-1-boss/boss-1-shot.png';
+import bossOneTrackshot from '../assets/img/enemies/stage-1-boss/boss-1-trackshot.png';
 
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
@@ -65,7 +69,7 @@ class Stage1Scene extends Scene {
 
     create() {
         // FOR DEVELOPMENT TESTING ONLY
-        const testing = false;
+        const testing = true;
         if (testing) {
             gamePlay.playerShootDelay = 20;
             gamePlay.playerSpray = 10;
@@ -124,6 +128,8 @@ class Stage1Scene extends Scene {
         // Player Control
         this.updatePlayer();
 
+        
+
         // Player Shooting timer delay
         this.playerShotTimer();
 
@@ -152,6 +158,21 @@ class Stage1Scene extends Scene {
 
         // Check if player is still alive
         checkIfPlayerAlive(this);
+
+
+
+        // Update X and Y positions for shot patterns
+        gamePlay.rotateShotsX ++;
+        gamePlay.rotateShotsY --;
+        if (gamePlay.rotateShotsX > 450) {
+            gamePlay.rotateShotsX = -450
+        }
+        if (gamePlay.rotateShotsY < -450) {
+            gamePlay.rotateShotsY = 450
+        }
+
+        // console.log(gamePlay.rotateShotsX);
+        // console.log(`${gamePlay.rotateShotsX} ||||| ${gamePlay.rotateShotsY}`);
         
 
         
@@ -164,14 +185,23 @@ class Stage1Scene extends Scene {
          * Check if player is still alive
          */
         if (gamePlay.playerHitPoints > 0) {
+            
             this.enemyBasic.createShip(225, 1);
-            this.arkShooterEnemy.createShip(450, 1);
-            // this.enemyBasic.createShip(675, 15);
-            // this.enemyBasic.createShip(200, 25);
-            // this.enemyBasic.createShip(150, 35);
-            // this.enemyBasic.createShip(300, 40);
-            // this.enemyBasic.createShip(450, 45);
-            // this.enemyBasic.createShip(600, 50);
+            this.enemyBasic.createShip(675, 1);
+            this.enemyBasic.createShip(225, 15);
+            this.enemyBasic.createShip(450, 15);
+            this.enemyBasic.createShip(675, 15);
+            this.enemyBasic.createShip(300, 20);
+            this.enemyBasic.createShip(450, 25);
+            this.enemyBasic.createShip(600, 30);
+            this.arkShooterEnemy.createShip(450, 40);
+            this.arkShooterEnemy.createShip(225, 50);
+            this.arkShooterEnemy.createShip(300, 60);
+            this.arkShooterEnemy.createShip(600, 75);
+            this.arkShooterEnemy.createShip(450, 90);
+            this.stageOneBossEnemy.createShip(225, 100);
+            this.stageOneBossEnemy.createShip(625, 100);
+            this.stageOneBossEnemy.createShip(450, 115);
         }
     }
 
@@ -207,10 +237,17 @@ class Stage1Scene extends Scene {
 
         const arkShooterShotPositions = {
             x: [11, -11, 97, -97, 116, -116],
-            y: [80, 80, 0, 0, 0, 0]
+            y: [80, 80, 0, 0, 0, 0],
+            delay: [0, 0, 100, 100, 300, 300]
         }
 
-        this.enemyBasic = new Enemy('basicShip', 200, 300, 85, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
+        const stageOneBossShotPositions = {
+            x: [7, -7, 13, -13, 41, -41],
+            y: [0, 0, 0, 0, 0, 0],
+            delay: [0, 0, 0, 0, 1345, 1345]
+        }
+
+        this.enemyBasic = new Enemy('basicShip', 500, 75, 30, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
             if (!this.basicShipLaserSound.isPlaying) {
                 this.basicShipLaserSound.play();
             }
@@ -221,6 +258,8 @@ class Stage1Scene extends Scene {
                 this.arkShotSound.play();
             }
         }, false, this);
+
+        this.stageOneBossEnemy = new Enemy('stageOneBoss', 10000, 100, 30, stageOneBossShotPositions, 'bossOneShot', 200, false, false, this);
 
 
         //Create Enemy groups
@@ -249,6 +288,10 @@ class Stage1Scene extends Scene {
         // Load ark shooter images
         this.load.image('arkShooter', arkShooter);
         this.load.image('arkShot', arkShot);
+        // Load stage 1 boss images
+        this.load.image('stageOneBoss', stageOneBoss);
+        this.load.image('bossOneShot', bossOneShot);
+        this.load.image('bossOneTrackshot', bossOneTrackshot);
         // Load point image
         this.load.image('point', point);
         // Load background image
@@ -305,7 +348,7 @@ class Stage1Scene extends Scene {
 
     initMiscSoundEffects() {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
-        this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.5});
+        this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.1});
         this.arkShotSound = this.sound.add('arkShot', {volume: 0.2});
         this.basicShipDeath = this.sound.add('basicShipDeath', {volume: 0.7});
     }
@@ -315,8 +358,8 @@ class Stage1Scene extends Scene {
         // Player
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 1});
-        this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.8});
+        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
+        this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.2});
 
         
     }
@@ -389,21 +432,8 @@ class Stage1Scene extends Scene {
 
     updatePlayer() {
 
-        if (this.cursors.left.isDown) {
-            this.player.x -= 3;
-        }
-
-        if (this.cursors.right.isDown) {
-            this.player.x += 3;
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.y -= 3;
-        }
-
-        if (this.cursors.down.isDown) {
-            this.player.y += 3;
-        }
+        this.player.x = this.input.x;
+        this.player.y = this.input.y;    
 
         if (this.shoot.isDown) {
             if (gamePlay.playerShootCounter === gamePlay.playerShootDelay) {
