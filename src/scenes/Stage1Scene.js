@@ -8,13 +8,19 @@ import{ musicConfig } from '../config/gameConfig';
 import LoadingBar from '../preloader_scripts/LoadingBar';
 import player from '../assets/img/player/player.png';
 import playerShot from '../assets/img/player/shoot.png';
+// Basic Ship
 import basicShip from '../assets/img/enemies/basic/basic_ship.png';
 import basicShipLaser from '../assets/img/enemies/basic/basic_ship_laser.png';
+// Ark Shooter
+import arkShooter from '../assets/img/enemies/ark-shooter/ark-shooter.png';
+import arkShot from '../assets/img/enemies/ark-shooter/ark-shot.png';
+
 import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import explosion1 from '../assets/img/spritesheets/explosion-1.png';
 import explosion2 from '../assets/img/spritesheets/explosion-2.png';
 import explosion3 from '../assets/img/spritesheets/explosion-3.png';
+import arkShotExplosion from '../assets/img/spritesheets/ark-shot-explosion.png';
 import playerDeathExplosion from '../assets/img/spritesheets/player-death-explosion.png';
 import explosion6 from '../assets/img/spritesheets/explosion-6.png';
 import point from '../assets/img/point.png';
@@ -146,6 +152,7 @@ class Stage1Scene extends Scene {
 
         // Check if player is still alive
         checkIfPlayerAlive(this);
+        
 
         
         
@@ -154,16 +161,17 @@ class Stage1Scene extends Scene {
 
         /**
          * Adding enemies to Scene
+         * Check if player is still alive
          */
         if (gamePlay.playerHitPoints > 0) {
             this.enemyBasic.createShip(225, 1);
-            this.enemyBasicTwo.createShip(450, 10);
-            this.enemyBasic.createShip(675, 15);
-            this.enemyBasic.createShip(200, 25);
-            this.enemyBasic.createShip(150, 35);
-            this.enemyBasic.createShip(300, 40);
-            this.enemyBasic.createShip(450, 45);
-            this.enemyBasic.createShip(600, 50);
+            this.arkShooterEnemy.createShip(450, 1);
+            // this.enemyBasic.createShip(675, 15);
+            // this.enemyBasic.createShip(200, 25);
+            // this.enemyBasic.createShip(150, 35);
+            // this.enemyBasic.createShip(300, 40);
+            // this.enemyBasic.createShip(450, 45);
+            // this.enemyBasic.createShip(600, 50);
         }
     }
 
@@ -197,13 +205,22 @@ class Stage1Scene extends Scene {
             y: [0]
         }
 
+        const arkShooterShotPositions = {
+            x: [11, -11, 97, -97, 116, -116],
+            y: [80, 80, 0, 0, 0, 0]
+        }
+
         this.enemyBasic = new Enemy('basicShip', 200, 300, 85, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
-            this.basicShipLaserSound.play();
+            if (!this.basicShipLaserSound.isPlaying) {
+                this.basicShipLaserSound.play();
+            }
         }, false, this);
 
-        this.enemyBasicTwo = new Enemy('basicShip', 500, 90, 65, enemyBasicShotPositions, 'basicShipLaser', 300, () => {
-            this.basicShipLaserSound.play();
-        }, true, this);
+        this.arkShooterEnemy = new Enemy('arkShooter', 1000, 100, 70, arkShooterShotPositions, 'arkShot', 900, () => {
+            if (!this.arkShotSound.isPlaying) {
+                this.arkShotSound.play();
+            }
+        }, false, this);
 
 
         //Create Enemy groups
@@ -226,9 +243,12 @@ class Stage1Scene extends Scene {
         // Load player images
         this.load.image("player", player);
         this.load.image("playerShot", playerShot);
-        // Load enemy 1 images
+        // Load basic enemy images
         this.load.image('basicShip', basicShip);
         this.load.image('basicShipLaser', basicShipLaser);
+        // Load ark shooter images
+        this.load.image('arkShooter', arkShooter);
+        this.load.image('arkShot', arkShot);
         // Load point image
         this.load.image('point', point);
         // Load background image
@@ -247,6 +267,10 @@ class Stage1Scene extends Scene {
             frameWidth: 128,
             frameHeight: 80
         });
+        this.load.spritesheet('arkShotExplosion', arkShotExplosion, {
+            frameWidth: 48,
+            frameHeight: 48
+        });
         this.load.spritesheet('playerDeathExplosion', playerDeathExplosion, {
             frameWidth: 92,
             frameHeight: 91
@@ -263,6 +287,7 @@ class Stage1Scene extends Scene {
         this.load.audio('pointPickup', [__dirname + 'src/assets/sound/effects/point_pickup.ogg']);
         this.load.audio('basicShipLaser', [__dirname + 'src/assets/sound/effects/ship_1_laser.ogg']);
         this.load.audio('basicShipDeath', [__dirname + 'src/assets/sound/effects/ship_1_death.ogg']);
+        this.load.audio('arkShot', [__dirname + 'src/assets/sound/effects/ark_shot.ogg']);
         this.load.audio('playerDeath', [__dirname + 'src/assets/sound/effects/player_death.ogg']);
         this.load.audio('shipHitBottom', [__dirname + 'src/assets/sound/effects/ship_hit_bottom.ogg']);
         
@@ -281,6 +306,7 @@ class Stage1Scene extends Scene {
     initMiscSoundEffects() {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
         this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.5});
+        this.arkShotSound = this.sound.add('arkShot', {volume: 0.2});
         this.basicShipDeath = this.sound.add('basicShipDeath', {volume: 0.7});
     }
     

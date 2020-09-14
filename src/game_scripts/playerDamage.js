@@ -10,6 +10,12 @@ const loadPlayerDamageAnimations = (pointer) => {
         repeat: 0
     });
     pointer.anims.create({
+        key: 'arkShotExplosion_anim',
+        frames: pointer.anims.generateFrameNumbers('arkShotExplosion'),
+        frameRate: 40,
+        repeat: 0
+    });
+    pointer.anims.create({
         key: 'explosion3_anim',
         frames: pointer.anims.generateFrameNumbers('explosion3'),
         frameRate: 20,
@@ -39,6 +45,18 @@ const initPlayerDamageCheck = (pointer) => {
                 pointer.basicExplode.play('explosion6_anim');
                 projectile.destroy();
                 break;
+            case "arkShot":
+                gamePlay.playerHitPoints -= 1;
+                pointer.arkShotExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'arkShotExplosion');
+
+                if (!pointer.arkShotExplode.isPlaying) {
+                    pointer.arkShotExplode.rotation = Math.random() * 20;
+                    pointer.arkShotExplode.setScale(1.75);
+                    pointer.arkShotExplode.setDepth(Math.round(Math.random() * 2));
+                    pointer.arkShotExplode.play('arkShotExplosion_anim');
+                }
+                projectile.destroy();
+                break;
         
             default:
                 gamePlay.playerHitPoints -= 1;
@@ -54,6 +72,11 @@ const initPlayerDamageCheck = (pointer) => {
         if(pointer.basicExplode) {
             pointer.basicExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 pointer.basicExplode.destroy();
+            });
+        }
+        if(pointer.arkShotExplode) {
+            pointer.arkShotExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+                pointer.arkShotExplode.destroy();
             });
         }
         if(pointer.defaultExplode) {

@@ -3,7 +3,7 @@ import MenuScene from "../scenes/MenuScene"
 import Stage1Scene from "../scenes/Stage1Scene";
 
 const musicConfig = {
-  mute: false,
+  mute: true,
   volume: 0.4,
   rate: 1,
   detune: 0,
