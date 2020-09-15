@@ -111,12 +111,22 @@ class Stage1Scene extends Scene {
         this.scoreLabel = this.add.bitmapText(20, 5, 'pixelFont', `ORBS ${gamePlay.playerPoints}`, 50).setDepth(10);
         //Display Ship Health
         this.shipHealth = this.add.bitmapText(config.width - 130, 5, 'pixelFont', `HP ${gamePlay.playerHitPoints}`, 50).setDepth(10);
+        // Tutorial (this will be removed and replaced in the future)
+        this.help = this.add.bitmapText(325, 450, 'pixelFont', `Hold spacebar to shoot \n \nMove with the mouse`, 40).setDepth(10);
+        this.time.addEvent({
+            callback: () => {
+                this.help.text = '';
+            },
+            repeat: 0,
+            delay: 4000
+        });
+
 
         // Init bitmapText field
         this.bitmapLabel = this.add.bitmapText(350, 450, 'pixelFont', '', 70).setMaxWidth(300);
 
         // Set bitmap text listeners
-        typewriteBitmapText('SPACE : SHOOT, CURSOR : MOVE', 0, this);
+        // typewriteBitmapText('SPACE : SHOOT, CURSOR : MOVE', 0, this);
         typewriteBitmapText('STAGE 1', 10, this); 
         typewriteBitmapText('STAGE 2', 35, this); 
         typewriteBitmapText('BOSS FIGHT!', 65, this); 
