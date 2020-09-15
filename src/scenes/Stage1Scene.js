@@ -108,7 +108,7 @@ class Stage1Scene extends Scene {
         loadPlayerDamageAnimations(this);
 
         //Display Scoring
-        this.scoreLabel = this.add.bitmapText(20, 5, 'pixelFont', `SCORE ${gamePlay.playerPoints}`, 50).setDepth(10);
+        this.scoreLabel = this.add.bitmapText(20, 5, 'pixelFont', `ORBS ${gamePlay.playerPoints}`, 50).setDepth(10);
         //Display Ship Health
         this.shipHealth = this.add.bitmapText(config.width - 130, 5, 'pixelFont', `HP ${gamePlay.playerHitPoints}`, 50).setDepth(10);
 
@@ -160,7 +160,7 @@ class Stage1Scene extends Scene {
         checkEnemyOffScreen(this);
 
         // Update Player Score
-        this.scoreLabel.text = `SCORE ${gamePlay.playerPoints}`;
+        this.scoreLabel.text = `ORBS ${gamePlay.playerPoints}`;
         // Update Player HP
         if (gamePlay.playerHitPoints > -1 ) {
             this.shipHealth.text = `HP ${gamePlay.playerHitPoints}`;
@@ -362,7 +362,7 @@ class Stage1Scene extends Scene {
         // Player
         this.playerShots = this.physics.add.group();
         this.shoot = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.2});
+        this.playerShootSoundEffect = this.sound.add('playerShootingSound', {volume: 0.3});
         this.playerShotExplosion = this.sound.add('playerShotExplosion', {volume: 0.2});
 
         
