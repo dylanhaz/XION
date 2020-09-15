@@ -11,6 +11,7 @@ import playerShot from '../assets/img/player/shoot.png';
 // Basic Ship
 import basicShip from '../assets/img/enemies/basic/basic_ship.png';
 import basicShipLaser from '../assets/img/enemies/basic/basic_ship_laser.png';
+import basicShipLaser2 from '../assets/img/enemies/basic/basic_ship_laser2.png';
 // Ark Shooter
 import arkShooter from '../assets/img/enemies/ark-shooter/ark-shooter.png';
 import arkShot from '../assets/img/enemies/ark-shooter/ark-shot.png';
@@ -39,7 +40,8 @@ import Player from '../game_scripts/Player';
 import Enemy from '../game_scripts/CreateEnemy';
 import { updateEnemyShots } from '../game_scripts/enemyShots';
 import { initEnemyDamageCheck, movePoints, checkOverlapPoints } from '../game_scripts/enemyDamage';
-import { initPlayerDamageCheck, checkEnemyOffScreen, loadPlayerDamageAnimations, checkIfPlayerAlive} from '../game_scripts/playerDamage'
+import { initPlayerDamageCheck, checkEnemyOffScreen, loadPlayerDamageAnimations, checkIfPlayerAlive} from '../game_scripts/playerDamage';
+import { typewriteBitmapText } from "../game_scripts/typewriter";
 //////////
 /////////
 ////////
@@ -110,10 +112,18 @@ class Stage1Scene extends Scene {
         //Display Ship Health
         this.shipHealth = this.add.bitmapText(config.width - 130, 5, 'pixelFont', `HP ${gamePlay.playerHitPoints}`, 50).setDepth(10);
 
+        // Init bitmapText field
+        this.bitmapLabel = this.add.bitmapText(350, 450, 'pixelFont', '', 70).setMaxWidth(300);
+
+        // Set bitmap text listeners
+        typewriteBitmapText('STAGE 1', 0, this); 
+        typewriteBitmapText('STAGE 2', 35, this); 
+        typewriteBitmapText('BOSS FIGHT!', 65, this); 
+
 
         // Sets the collision box sizes for game objects
         this.setCollisionBoxes();
-       
+        
 
         
     }
@@ -164,8 +174,8 @@ class Stage1Scene extends Scene {
         // Update X and Y positions for shot patterns
         gamePlay.rotateShotsX ++;
         gamePlay.rotateShotsY --;
-        if (gamePlay.rotateShotsX > 450) {
-            gamePlay.rotateShotsX = -450
+        if (gamePlay.rotateShotsX > 200) {
+            gamePlay.rotateShotsX = -200
         }
         if (gamePlay.rotateShotsY < -450) {
             gamePlay.rotateShotsY = 450
@@ -179,29 +189,21 @@ class Stage1Scene extends Scene {
         
 
 
-
-        /**
-         * Adding enemies to Scene
-         * Check if player is still alive
-         */
+        // Level Creation
         if (gamePlay.playerHitPoints > 0) {
             
-            this.enemyBasic.createShip(225, 1);
-            this.enemyBasic.createShip(675, 1);
-            this.enemyBasic.createShip(225, 15);
-            this.enemyBasic.createShip(450, 15);
-            this.enemyBasic.createShip(675, 15);
-            this.enemyBasic.createShip(300, 20);
+            this.enemyBasic.createShip(225, 10);
+            this.enemyBasic.createShip(675, 10);
+            this.enemyBasic.createShip(225, 25);
             this.enemyBasic.createShip(450, 25);
-            this.enemyBasic.createShip(600, 30);
-            this.arkShooterEnemy.createShip(450, 40);
-            this.arkShooterEnemy.createShip(225, 50);
-            this.arkShooterEnemy.createShip(300, 60);
-            this.arkShooterEnemy.createShip(600, 75);
-            this.arkShooterEnemy.createShip(450, 90);
-            this.stageOneBossEnemy.createShip(225, 100);
-            this.stageOneBossEnemy.createShip(625, 100);
-            this.stageOneBossEnemy.createShip(450, 115);
+            this.enemyBasic.createShip(675, 25);
+               
+            this.arkShooterEnemy.createShip(450, 45);
+            this.arkShooterEnemy.createShip(225, 45);
+            
+            this.stageOneBossEnemy.createShip(225, 75);
+            this.stageOneBossEnemy.createShip(625, 75);
+            this.stageOneBossEnemy.createShip(450, 85);
         }
     }
 
@@ -247,19 +249,19 @@ class Stage1Scene extends Scene {
             delay: [0, 0, 0, 0, 1345, 1345]
         }
 
-        this.enemyBasic = new Enemy('basicShip', 500, 75, 30, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
+        this.enemyBasic = new Enemy('basicShip', 3000, 75, 30, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
             if (!this.basicShipLaserSound.isPlaying) {
                 this.basicShipLaserSound.play();
             }
         }, false, this);
 
-        this.arkShooterEnemy = new Enemy('arkShooter', 1000, 100, 70, arkShooterShotPositions, 'arkShot', 900, () => {
+        this.arkShooterEnemy = new Enemy('arkShooter', 5000, 100, 70, arkShooterShotPositions, 'arkShot', 900, () => {
             if (!this.arkShotSound.isPlaying) {
                 this.arkShotSound.play();
             }
         }, false, this);
 
-        this.stageOneBossEnemy = new Enemy('stageOneBoss', 10000, 100, 30, stageOneBossShotPositions, 'bossOneShot', 200, false, false, this);
+        this.stageOneBossEnemy = new Enemy('stageOneBoss', 20000, 200, 30, stageOneBossShotPositions, 'bossOneShot', 200, false, false, this);
 
 
         //Create Enemy groups
@@ -285,6 +287,7 @@ class Stage1Scene extends Scene {
         // Load basic enemy images
         this.load.image('basicShip', basicShip);
         this.load.image('basicShipLaser', basicShipLaser);
+        this.load.image('basicShipLaser2', basicShipLaser2);
         // Load ark shooter images
         this.load.image('arkShooter', arkShooter);
         this.load.image('arkShot', arkShot);
@@ -333,6 +336,7 @@ class Stage1Scene extends Scene {
         this.load.audio('arkShot', [__dirname + 'src/assets/sound/effects/ark_shot.ogg']);
         this.load.audio('playerDeath', [__dirname + 'src/assets/sound/effects/player_death.ogg']);
         this.load.audio('shipHitBottom', [__dirname + 'src/assets/sound/effects/ship_hit_bottom.ogg']);
+        this.load.audio('typewriter', [__dirname + 'src/assets/sound/effects/typewriter.ogg']);
         
     }
     //////////
@@ -350,7 +354,7 @@ class Stage1Scene extends Scene {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
         this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.1});
         this.arkShotSound = this.sound.add('arkShot', {volume: 0.2});
-        this.basicShipDeath = this.sound.add('basicShipDeath', {volume: 0.7});
+        this.basicShipDeath = this.sound.add('basicShipDeath', {volume: 0.4});
     }
     
 
@@ -402,6 +406,8 @@ class Stage1Scene extends Scene {
         
         
     }
+
+    
 
     // Set object collision boxes
     setCollisionBoxes() {

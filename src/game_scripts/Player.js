@@ -7,11 +7,11 @@ export default class Player {
 
     createPlayer() {
         this.pointer.load.image("player", player);
-        this.pointer.player = this.pointer.physics.add.image(450, 850, "player").setScale(0.7);
+        this.pointer.player = this.pointer.physics.add.image(450, 850, "player").setScale(0.5);
         this.pointer.player.setCollideWorldBounds(true);
         this.pointer.initShooting();
     }
-
+ 
     
 
 }

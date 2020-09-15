@@ -71,16 +71,16 @@ const createEnemyShot = (item, bulletPositions, bulletType, bulletSpeed, bulletS
         }
 
         if (item.texture.key === 'basicShip') {
-                pointer.rotateShot = pointer.enemyShots.create(item.x, item.y, 'bossOneShot');
+                pointer.rotateShot = pointer.enemyShots.create(item.x, item.y, 'basicShipLaser');
                 pointer.rotateShot.setVelocityX(gamePlay.rotateShotsX);
                 pointer.rotateShot.setVelocityY(200);
-                pointer.rotateShot2 = pointer.enemyShots.create(item.x, item.y, 'bossOneShot');
+                pointer.rotateShot2 = pointer.enemyShots.create(item.x, item.y, 'basicShipLaser2');
                 pointer.rotateShot2.setVelocityX(-gamePlay.rotateShotsX);
                 pointer.rotateShot2.setVelocityY(200);
-                pointer.rotateShot3 = pointer.enemyShots.create(item.x, item.y, 'bossOneShot');
+                pointer.rotateShot3 = pointer.enemyShots.create(item.x, item.y, 'basicShipLaser');
                 pointer.rotateShot3.setVelocityX(gamePlay.rotateShotsX);
                 pointer.rotateShot3.setVelocityY(-200);
-                pointer.rotateShot4 = pointer.enemyShots.create(item.x, item.y, 'bossOneShot');
+                pointer.rotateShot4 = pointer.enemyShots.create(item.x, item.y, 'basicShipLaser2');
                 pointer.rotateShot4.setVelocityX(-gamePlay.rotateShotsX);
                 pointer.rotateShot4.setVelocityY(-200);
                 pointer.rotateShot.setDepth(4);
