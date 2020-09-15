@@ -23,12 +23,12 @@ const gamePlay = {
   rotateShotsY : 0,
   bossOneTrackOffset : 0,
   globalTimer : 0,
-  playerShootDelay : 60,
+  playerShootDelay : 30,
   playerShootCounter : 0,
   playerDamage : 20,
   playerSpray : 5,
   playerPoints : 0,
-  playerHitPoints : 10,
+  playerHitPoints : 15,
   gameRunning : true
 }
 
@@ -37,7 +37,7 @@ const config = {
     parent: "phaser-example",
     width: 900,
     height: 1000,
-    scene: [Stage1Scene, MenuScene],
+    scene: [MenuScene, Stage1Scene],
     autoCenter: true,
     physics: {
       default: "arcade",

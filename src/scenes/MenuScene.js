@@ -218,7 +218,7 @@ class MenuScene extends Scene {
                 this.neonFlicker.stop();
                 this.scene.start('Stage1Scene')
             } else if(menuConfig.selection === 1) {
-                alert('customize ship');
+                alert('UNDER CONSTRUCTION');
             }
         });
     }

@@ -71,7 +71,7 @@ class Stage1Scene extends Scene {
 
     create() {
         // FOR DEVELOPMENT TESTING ONLY
-        const testing = true;
+        const testing = false;
         if (testing) {
             gamePlay.playerShootDelay = 20;
             gamePlay.playerSpray = 10;
@@ -116,7 +116,8 @@ class Stage1Scene extends Scene {
         this.bitmapLabel = this.add.bitmapText(350, 450, 'pixelFont', '', 70).setMaxWidth(300);
 
         // Set bitmap text listeners
-        typewriteBitmapText('STAGE 1', 0, this); 
+        typewriteBitmapText('SPACE : SHOOT, CURSOR : MOVE', 0, this);
+        typewriteBitmapText('STAGE 1', 10, this); 
         typewriteBitmapText('STAGE 2', 35, this); 
         typewriteBitmapText('BOSS FIGHT!', 65, this); 
 
@@ -198,7 +199,7 @@ class Stage1Scene extends Scene {
             this.enemyBasic.createShip(450, 25);
             this.enemyBasic.createShip(675, 25);
                
-            this.arkShooterEnemy.createShip(450, 45);
+            this.arkShooterEnemy.createShip(675, 45);
             this.arkShooterEnemy.createShip(225, 45);
             
             this.stageOneBossEnemy.createShip(225, 75);
