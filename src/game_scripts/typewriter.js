@@ -27,9 +27,11 @@ const typewriteBitmapText = (text, delay, pointer) =>
             // Add text at set delay speed
             pointer.time.addEvent({
                 callback: () => {
-                    pointer.bitmapLabel.text += wrappedText[i]
-                    pointer.typewriterSound.play();
-                    ++i
+                    if (gamePlay.gameRunning === true) {
+                        pointer.bitmapLabel.text += wrappedText[i]
+                        pointer.typewriterSound.play();
+                        ++i
+                    }
                 },
                 repeat: length - 1,
                 delay: 70

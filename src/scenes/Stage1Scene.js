@@ -2,9 +2,10 @@ import { Scene } from 'phaser';
 import{ config, gamePlay } from '../config/gameConfig';
 import{ musicConfig } from '../config/gameConfig';
 
-/**
- * preloader imports
- */
+// ***IMPORTANT***
+// DO NOT LOAD OGG OR ANY AUDIO FILES HERE, USE THE METHOD loadAssets INSTEAD
+
+//PRELOADER IMPORTS
 import LoadingBar from '../preloader_scripts/LoadingBar';
 import player from '../assets/img/player/player.png';
 import playerShot from '../assets/img/player/shoot.png';
@@ -192,26 +193,21 @@ class Stage1Scene extends Scene {
             gamePlay.rotateShotsY = 450
         }
 
-        // console.log(gamePlay.rotateShotsX);
-        // console.log(`${gamePlay.rotateShotsX} ||||| ${gamePlay.rotateShotsY}`);
-        
-
-        
-        
 
 
-        // Level Creation
+
+        // LEVEL CREATION
         if (gamePlay.playerHitPoints > 0) {
-            
+            // Stage 1
             this.enemyBasic.createShip(225, 10);
             this.enemyBasic.createShip(675, 10);
             this.enemyBasic.createShip(225, 25);
             this.enemyBasic.createShip(450, 25);
             this.enemyBasic.createShip(675, 25);
-               
+            // Stage 2
             this.arkShooterEnemy.createShip(675, 45);
             this.arkShooterEnemy.createShip(225, 45);
-            
+            // Stage 3 (Boss fight)
             this.stageOneBossEnemy.createShip(225, 75);
             this.stageOneBossEnemy.createShip(625, 75);
             this.stageOneBossEnemy.createShip(450, 85);
@@ -222,18 +218,16 @@ class Stage1Scene extends Scene {
     //////////
     //////////
     //////////
-    /**
-     * Preload Methods
-     * 
-     * 
-     * 
-     */
+    // PRELOAD METHODS
 
     loadCustomClasses(){
         this.loadingBar = new LoadingBar(this);
         this.background = new Background(900, this);
         this.player = new Player(this);
     }
+
+    // ENEMY CLASS CREATION
+
     //  Create enemy types here using the new Enemy class
     //  shotPositions is writen as an object with 2 arrays
     //  first one is for x, seconds is for y 
@@ -242,6 +236,7 @@ class Stage1Scene extends Scene {
     //     x: [10, 20, 30, 40],
     //     y: [5, 10, 15, 20]
     // }
+    // A Delay between different shots can also be added if needed
     loadEnemies(){
         const enemyBasicShotPositions = {
             x: [0],
@@ -260,6 +255,8 @@ class Stage1Scene extends Scene {
             delay: [0, 0, 0, 0, 1345, 1345]
         }
 
+
+        // ENEMY SHIP CLASSES
         this.enemyBasic = new Enemy('basicShip', 3000, 75, 30, enemyBasicShotPositions, 'basicShipLaser', 600, () => {
             if (!this.basicShipLaserSound.isPlaying) {
                 this.basicShipLaserSound.play();
@@ -353,14 +350,9 @@ class Stage1Scene extends Scene {
     //////////
     //////////
     //////////
+    // CREATION PHASE METHODS
 
-    /**
-     * Create Methods
-     * 
-     * 
-     * 
-     */
-
+    // Load misc. game sound files so they are ready for use
     initMiscSoundEffects() {
         this.pointPickup = this.sound.add('pointPickup', {volume: 0.3});
         this.basicShipLaserSound = this.sound.add('basicShipLaser', {volume: 0.1});
@@ -369,6 +361,7 @@ class Stage1Scene extends Scene {
     }
     
 
+    // Init Player event listener for shooting with spacebar
     initShooting() {
         // Player
         this.playerShots = this.physics.add.group();
@@ -379,12 +372,16 @@ class Stage1Scene extends Scene {
         
     }
     
+    // Create player's bullets based on gamePlay config
     createPlayerShot() {
+        // Set positions for each bullet starting location
         const gun1 = this.player.x + 13;
         const gun2 = this.player.x - 13;
         const gun3 = this.player.x + 23;
         const gun4 = this.player.x - 23;
         const gunYPosition = this.player.y - 33;
+
+        // Check if player is still alive before trying to create bullets
         if (gamePlay.gameRunning === true) {
             this.playerShots.create(gun1, gunYPosition, 'playerShot');
             this.playerShootSoundEffect.play();
@@ -397,6 +394,7 @@ class Stage1Scene extends Scene {
                 }, 10 * i)
                 
             }
+            // Set a delay before the 2nd round of bullets is created, this will create a nice looking 'spray' effect of bullets rather than a big clump all at once
             setTimeout(()=> {
                 if(this.shoot.isDown) {
     
@@ -422,13 +420,24 @@ class Stage1Scene extends Scene {
 
     // Set object collision boxes
     setCollisionBoxes() {
+        // Shrink size of player's hitbox
         this.defineBoxSize(this.player, 50);
     }
 
+    /**
+     * Adjust hitbox sizing
+     * @param {game object} object - Set which game object to adjust
+     * @param {number} boxOffset - Set number of pixels to adjust the size of the default hitbox
+     */
     defineBoxSize(object, boxOffset) {
         object.setSize(object.frame.width - boxOffset, object.frame.height - boxOffset, false).setOffset(boxOffset / 2, boxOffset / 2)
     }
 
+    /**
+     * 
+     * @param {boolean} play - Mostly used for development, set if the music should actually start or not
+     * @param {string} key - Audio file key
+     */
     startMusic(play, key) {
         // Add and start background music
         this.music = this.sound.add(key, musicConfig);
@@ -449,9 +458,11 @@ class Stage1Scene extends Scene {
 
     updatePlayer() {
 
+        // Set Player's position to be the same as the cursor's
         this.player.x = this.input.x;
         this.player.y = this.input.y;    
 
+        // Check if player is trying to shoot
         if (this.shoot.isDown) {
             if (gamePlay.playerShootCounter === gamePlay.playerShootDelay) {
                 //Shooting
@@ -461,6 +472,7 @@ class Stage1Scene extends Scene {
             }
         }
 
+        // Set speed of Player's bullets
         Phaser.Actions.Call(this.playerShots.getChildren(), (shot) => {
             shot.setVelocityY(-1000);
             if(shot.y < -5) {
@@ -469,12 +481,14 @@ class Stage1Scene extends Scene {
         });
     }
 
+    // Manage the game clock for delaying the Player's shots
     playerShotTimer() {
         if(gamePlay.playerShootCounter < gamePlay.playerShootDelay) {
             gamePlay.playerShootCounter ++;
         }
     }
 
+    // Manage game resources by remove game objects which have moved out of view
     removeOffScreenItems() {
         Phaser.Actions.Call(this.enemyShots.getChildren(), (shot) => {
             if(shot.y > config.height + 100) {
@@ -486,9 +500,9 @@ class Stage1Scene extends Scene {
     
 
     moveStars() {
-        /**
-         * Check if stars are below screen and reset
-         */
+
+        // Check if stars are below screen and reset
+        
         Phaser.Actions.Call(this.stars.getChildren(), (item) => {
             if (item.y > config.height + 10) {
                 item.y = -10;

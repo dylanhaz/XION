@@ -133,7 +133,7 @@ const checkEnemyOffScreen = (pointer) => {
             //Shake the Camera
             pointer.cameras.main.shake(200, 0.05);
             // Play explosion sound effect
-            pointer.shipHitBottom = pointer.sound.add('shipHitBottom', {volume: 0.5});
+            pointer.shipHitBottom = pointer.sound.add('shipHitBottom', {volume: 0.3});
             pointer.shipHitBottom.play();
             // Remove Ship
             enemy.destroy();
@@ -162,7 +162,7 @@ const checkIfPlayerAlive = (pointer) => {
         // Shake the Game Screen
         pointer.cameras.main.shake(1000, 0.05);
         // Play explosion sound effect
-        pointer.playerDeathSound = pointer.sound.add('playerDeath', {volume: 0.3});
+        pointer.playerDeathSound = pointer.sound.add('playerDeath', {volume: 0.2});
         pointer.playerDeathSound.play();
         // Stop Main Music
         pointer.music.stop();
