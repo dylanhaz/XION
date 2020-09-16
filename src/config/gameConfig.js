@@ -23,10 +23,10 @@ const gamePlay = {
   rotateShotsY : 0,
   bossOneTrackOffset : 0,
   globalTimer : 0,
-  playerShootDelay : 30,
+  playerShootDelay : 20,
   playerShootCounter : 0,
   playerDamage : 20,
-  playerSpray : 5,
+  playerSpray : 10,
   playerPoints : 0,
   playerHitPoints : 15,
   gameRunning : true

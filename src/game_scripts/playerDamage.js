@@ -37,6 +37,7 @@ const initPlayerDamageCheck = (pointer) => {
         // Then create the correct explosion damage and apply the damage
         switch (projectile.texture.key) {
             case "basicShipLaser":
+            case "basicShipLaser2":
                 gamePlay.playerHitPoints -= 1;
                 pointer.basicExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'explosion6');
                 pointer.basicExplode.rotation = Math.random() * 20;
@@ -83,13 +84,7 @@ const initPlayerDamageCheck = (pointer) => {
                 break;
         
             default:
-                gamePlay.playerHitPoints -= 1;
-                pointer.defaultExplode = pointer.add.sprite(projectile.x, projectile.y + 40, 'explosion6');
-                pointer.defaultExplode.rotation = Math.random() * 20;
-                pointer.defaultExplode.setScale(1.75);
-                pointer.defaultExplode.setDepth(Math.round(Math.random() * 2));
-                pointer.defaultExplode.play('explosion6_anim');
-                projectile.destroy();
+
                 break;
         }
 
@@ -101,11 +96,6 @@ const initPlayerDamageCheck = (pointer) => {
         if(pointer.arkShotExplode) {
             pointer.arkShotExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 pointer.arkShotExplode.destroy();
-            });
-        }
-        if(pointer.defaultExplode) {
-            pointer.defaultExplode.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-                pointer.basicExplode.destroy();
             });
         }
 
@@ -127,6 +117,7 @@ const checkEnemyOffScreen = (pointer) => {
             // Create Explosion
             pointer.bottomExplosion = pointer.add.sprite(enemy.x, config.height- 20, 'explosion3').setScale(1.4);
             pointer.bottomExplosion.play('explosion3_anim');
+
             pointer.bottomExplosion.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
                 pointer.bottomExplosion.destroy();
             });
