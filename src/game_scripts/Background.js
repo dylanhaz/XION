@@ -3,7 +3,14 @@ import star from '../assets/img/star.png';
 import background from '../assets/img/starfield_alpha.png';
 import{ config } from '../config/gameConfig';
 
+
+
 export default class Background {
+    /**
+     * 
+     * @param {Number} starSpeed 
+     * @param {ThisType} pointer 
+     */
     constructor(starSpeed, pointer) {
         this.starSpeed = starSpeed;
         this.pointer = pointer;
@@ -30,4 +37,6 @@ export default class Background {
             // console.log(item);
         });
     }
+
+    
 }

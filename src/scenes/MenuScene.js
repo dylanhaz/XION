@@ -10,6 +10,7 @@ import startKey from '../assets/img/start.png';
 import start_selectedKey from '../assets/img/start_selected.png'
 import customizeShipKey from '../assets/img/customize-ship.png';
 import customizeShipKey_selected from '../assets/img/customize-ship_selected.png';
+import Background from '../game_scripts/Background'
 
 
 
@@ -63,7 +64,9 @@ class MenuScene extends Scene {
         this.initCursorKeys();
 
         // Add Background
-        this.createBackground();
+        this.background = new Background(150, this);
+        this.background.createBackground();
+        this.addLogo();
 
         // Add menu keys
         this.createMenuKeys();
@@ -90,15 +93,6 @@ class MenuScene extends Scene {
 
     /////
     /////
-    /////
-    /////
-    /////
-    /////
-    /////
-
-    /**
-     * Methods
-     */
 
     resetMenuSelections() {
         this.startKey.setTexture('start');
@@ -128,24 +122,9 @@ class MenuScene extends Scene {
         this.menuClick = this.sound.add('menuClick');
     }
 
-    createBackground() {
-        /**
-          * Create a set number of stars and put them in random positions on the screen at different speeds according to size
-         */
-        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0).setScale(0.5);
 
-        this.stars = this.physics.add.group();
 
-        for (var i = 0; i < 100; i++) {
-            this.stars.create(0 + Math.random() * config.width, 0 + Math.random() * config.height, 'star');
-        };
-
-        Phaser.Actions.Call(this.stars.getChildren(), (item) => {
-            item.setScale(Math.random());
-            item.setVelocityY(Math.random() * ((item._scaleX) * 150));
-            // console.log(item);
-        });
-
+    addLogo() {
         // Add XION logo to screen
         this.logo = this.add.sprite(450, 150, "logo");
         this.anims.create({
@@ -155,7 +134,6 @@ class MenuScene extends Scene {
             repeat: -1
           });
           this.logo.play("logo_anims");
-          
     }
 
     createMenuKeys() {
